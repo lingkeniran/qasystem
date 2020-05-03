@@ -1,0 +1,260 @@
+<template>
+    <!--头部目录区-->
+    <div>
+        <div class="el-header">
+            <div class="logo">
+                <img src="../../assets/logo.png" alt="Q&A" width="100%">
+            </div>
+            <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                <el-menu-item index="1" @click="toIndex()">首页</el-menu-item>
+                <!-- <el-menu-item index="2">问题列表</el-menu-item> -->
+            </el-menu>
+            <el-input placeholder="搜索问题" v-model="content" >
+                <!-- <img src="../assets/sousuo.png" slot="suffix"> -->
+                    <i slot="suffix" class="el-input__icon el-icon-search" @click="searchQues()"></i>
+            </el-input>
+            <!-- <el-button type="primary" icon="el-icon-search">搜索</el-button> -->
+            <!-- <el-button class="askBtn" type="primary" @click="centerDialogVisible = true">提问</el-button> -->
+                <!-- <el-dialog
+                    title="提问"
+                    :visible.sync="centerDialogVisible"
+                    width="750px"
+                    height="500px">
+                    <editor ></editor>
+                     <span slot="footer" class="dialog-footer">
+                        <el-button class="configBtn" type="primary" @click="askQuestion()">提 问</el-button>
+                    </!--> 
+                <!-- </el-dialog>  -->
+            <editorDialog class="askBtn"></editorDialog>
+            <div v-if="isLogin">
+                <el-dropdown >
+                    <span  @click="gotoMessage()">
+                        <el-badge :value="222" :max="99" class="item">
+                            <img class="img_message" src="../../assets/xiaoxi.png" alt="消息">
+                        </el-badge>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item>消息1</el-dropdown-item>
+                        <el-dropdown-item>消息2</el-dropdown-item>
+                        <el-dropdown-item>消息3</el-dropdown-item>
+                        <el-dropdown-item>消息4</el-dropdown-item>
+                        <el-dropdown-item>消息5</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+                <el-dropdown>
+                    <span v-html="portrait">
+                        <img class="img_portrait" src="portrait" alt="头像">
+                        <!-- <img src="../../assets/01.jpg" width="36px" height="36px" style="border-radius:25px"> -->
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item>
+                            <div class="dropdownItem" @click="gotoUserPage()">
+                                <img class="littleIcon" src="../../assets/yonghu.png">
+                                个人主页
+                            </div>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                            <div class="dropdownItem" @click="gotoSetting()">
+                                <img class="littleIcon" src="../../assets/shezhi.png">
+                                设置
+                            </div>
+                        </el-dropdown-item>
+                        <el-dropdown-item>
+                            <div class="dropdownItem" @click="logout()">
+                                <img class="littleIcon" src="../../assets/tuichu.png">
+                                退出
+                            </div>
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </div>
+            <div v-if="nonLogin">
+                <el-link type="primary" class="text"><router-link to="login">登录</router-link></el-link>
+                <span class="text">/</span>
+                <el-link type="primary" class="text"><router-link to="register">注册</router-link></el-link>
+            </div>
+        </div>
+        <div class="line"></div>
+    </div>
+</template>
+
+<script>
+import editorDialog from './editorDialog.vue'
+import Qs from 'qs'
+export default {
+    name:'myHeader',
+    data(){
+        return{
+            centerDialogVisible: false,
+            isLogin:'',
+            nonLogin:'',
+            portrait:'',
+            content:''
+        }
+    },
+    created(){
+        this.isUserLogin()
+        this.getUserInfo()
+    },
+    methods:{
+        isUserLogin(){
+            // console.log(window.sessionStorage.getItem('token'))
+            var token=window.sessionStorage.getItem('token')
+            console.log('token',token)
+            if(token==null||token==undefined||token==""){
+                this.nonLogin=true
+            }else{
+                this.isLogin=true
+            }
+            console.log(this.isLogin)
+        },
+        gotoUserPage(){
+            let _this=this
+            _this.$router.push('/userpage')
+        },
+        gotoSetting(){
+            let _this=this
+            _this.$router.push('/setting')
+        },
+        logout(){
+            window.sessionStorage.clear()
+            let _this=this
+            _this.$router.push('/login')
+        },
+        getUserInfo(){
+            let data = {
+                token: window.sessionStorage.getItem('token')
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/getUserInfo',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log("用户信息",res);
+                console.log(res.data.data.u_icon)
+                if(res.data.resultCode==20006){
+                    _this.portrait=res.data.data.u_icon
+                // if(res.data.list.q_protected==0&&res.data.list.u_reported==0){
+                    // _this.portrait=res.data.data.list
+                    // console.log(_this.quesList)
+                    // if(res.data.data.list.q_finished==1){
+                    //     _this.isEnd=true
+                    // }else{
+                    //     _this.isEnd=false
+                    // }
+                    // if(res.data.data.list.isReported==1){
+                    //     _this.isReport=false
+                    // }else{
+                    //     _this.isReport=true
+                    // }
+                // }
+                }else{
+                    console.log(res.resultCode)
+                    alert('加载失败，请稍后再试')
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        },
+        toIndex(){
+            let _this=this
+            _this.$router.push('/')
+        },
+        gotoMessage(){
+            let _this=this
+            _this.$router.push('/message')
+        },
+        searchQues(){
+            let _this=this
+            _this.$router.push({
+                path:'/search',
+                name:'search',
+                //参数
+                query:{
+                    content:_this.content,
+                    // dataObj:{}
+                }
+            })
+        }
+    }, 
+    components:{
+        editorDialog
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.el-header{
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-around;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+.logo{
+    width: 130px;
+    margin-right: 60px;
+    display: flex;
+    align-items: center;
+}
+.el-menu-item{
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.dropdownItem{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.littleIcon{
+    height: 20px;
+    width: 20px;
+    margin-right: 5px;
+}
+.el-input{
+    margin-left: 50px;
+    width: 400px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+.el-menu.el-menu--horizontal{
+     border-bottom:white;
+}
+.item {
+  margin-top: 10px;
+  margin-right: 40px;
+}
+.line{
+    border-bottom:solid 1px #e6e6e6;
+}
+.el-button{
+    margin-right: 120px;
+}
+.img_message{
+    height:30px;
+    /* // margin-right: 20px; */
+}
+.img_portrait{
+    height:40px;
+    margin-right: 20px;
+}
+.configBtn{
+    margin-right: 30px;;
+}
+.askBtn{
+    margin-right: 60px;
+}
+.text{
+    font-size: 16px;
+    margin-right: 10px;
+    color: #229ad1;
+}
+</style>
