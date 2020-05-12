@@ -405,7 +405,7 @@ export default {
 .text-font-identify{
     display: flex;
     justify-content: flex-start;
-    width: 180px;
+    width: 208px;
     font-size: 17px;
     font-family: 'Microsoft YaHei';
 }
