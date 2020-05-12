@@ -56,12 +56,22 @@
                                     <input @blur="getConfirmpassword()" type="password" class="form-controls"
                                         id="confirmpassword" placeholder="确认密码">
                                 </div>
-                                <div class="form-groups-specific">
-                                    <div class="text-font">请输入右侧验证码：</div>
+                                <div class="form-groups-specific-identify">
+                                    <!-- <div class="text-font">请输入右侧验证码：</div>
                                     <div id="vertificationInfo" style="color:red;font-size:12px;float:left"></div>
                                     <input @blur="getVertification()" type="text" class="form-controls-specific"
                                         id="vertification" placeholder="验证码">
-                                    <img src="http://120.26.172.98:8080/QASystem/public/img">
+                                    <img src="http://120.26.172.98:8080/QASystem/public/img"> -->
+                                    
+                                    <!-- 验证码 -->
+                                    <div class="identify-container">
+                                        <div class="text-font-identify">验证码：</div>
+                                        <input type="text" id="code" v-model="code" class="form-controls identify-input" placeholder="请输入您的验证码" />
+                                    </div>
+                                    <div class="login-code" @click="refreshCode()">
+                                        <!--验证码组件-->
+                                        <identify :identifyCode="identifyCode"></identify>
+                                    </div>
                                 </div>
                                 <button type="button" class="btn btn-primary btn-lg btn-block" id="btn" @click="register()">注册</button>
                                 <div class="bottom">
@@ -78,6 +88,7 @@
 
 <script>
 import $ from 'jquery';
+import identify from './module/identify.vue'
 var filename="";
 var flag=0;
 $(function () {
@@ -134,9 +145,38 @@ function upimg() {
 export default {
     data(){
         return{
+            identifyCodes: "1234567890",
+            identifyCode: "",
+            code:"",//text框输入的验证码
         }
     },
+    components:{
+        identify
+    },
+    mounted(){
+        this.identifyCode = "";
+        this.makeCode(this.identifyCodes, 4);
+    },
+    created(){
+        this.refreshCode()
+    },
     methods:{
+        //验证码
+        randomNum(min, max) {
+            return Math.floor(Math.random() * (max - min) + min);
+        },
+        refreshCode() {
+            this.identifyCode = "";
+            this.makeCode(this.identifyCodes, 4);
+        },
+        makeCode(o, l) {
+            for (let i = 0; i < l; i++) {
+            this.identifyCode += this.identifyCodes[
+                this.randomNum(0, this.identifyCodes.length)
+                ];
+            }
+            console.log('验证码',this.identifyCode);
+        },
         checkNickname() {
             var nickname = document.getElementById("nickname").value;
             if( nickname == "" )
@@ -236,26 +276,45 @@ export default {
             }
         },
         getVertification() {
-            var vertification = document.getElementById("vertification").value;
-            var vertificationInfo = document.getElementById("vertification");
-            if( vertification == "" )
-        	{
-        		$("#vertification").attr('placeholder',"验证码不能为空");
-        		$("#vertification").css('borderStyle','solid');
-        		$("#vertification").css('borderColor','#FF0000');
-        		$("#vertification").css('boxShadow','0 0 15px #FF0000');
-        	}
-        	if( vertification != "" )
-        	{
-        		$("#vertification").attr('placeholder',"");
-        		$("#vertification").css('borderColor','');
-        		$("#vertification").css('boxShadow','');
-        		$("#vertification").css('borderStyle','');
-        	}
+            if(this.code==""){
+                // alert('请输入验证码');
+                this.$message({
+                    message: '请输入验证码!',
+                    type: 'warning'
+                });
+                return;
+            }
+            if(this.identifyCode!=this.code){
+                this.code='';
+                this.refreshCode();
+                // alert('请输入正确的验证码')
+                this.$message({
+                    message: '请输入正确的验证码!',
+                    type: 'warning'
+                });
+                return;
+            }
+            // var vertification = document.getElementById("vertification").value;
+            // var vertificationInfo = document.getElementById("vertification");
+            // if( vertification == "" )
+        	// {
+        	// 	$("#vertification").attr('placeholder',"验证码不能为空");
+        	// 	$("#vertification").css('borderStyle','solid');
+        	// 	$("#vertification").css('borderColor','#FF0000');
+        	// 	$("#vertification").css('boxShadow','0 0 15px #FF0000');
+        	// }
+        	// if( vertification != "" )
+        	// {
+        	// 	$("#vertification").attr('placeholder',"");
+        	// 	$("#vertification").css('borderColor','');
+        	// 	$("#vertification").css('boxShadow','');
+        	// 	$("#vertification").css('borderStyle','');
+        	// }
         },
         register(){
             console.log(filename);
-          	console.log(flag);
+            console.log(flag);
+              
           	if(flag==0){
           		$.ajax({
                     type: "POST",
@@ -267,7 +326,7 @@ export default {
                     	u_phone: $("#phone").val(),
                         u_email: $("#email").val(),
                         u_pass: $("#password").val(),
-                        RandomCode: $("#vertification").val(),
+                        RandomCode: this.identifyCode,
                         picture:"'http://120.26.172.98:8080/QASystem/uploadImages/'+portrait.jpg"
                     },
                     success: function (json) {
@@ -323,4 +382,31 @@ export default {
 
 <style lang="less" scoped>
 @import url('./css/register.css');
+/*验证码样式*/
+.code{
+ width:124px;
+ height:31px;
+ border:1px solid rgba(186,186,186,1);
+}
+.login-code{
+ cursor: pointer;
+}
+.identify-container{
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+.form-groups-specific-identify{
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+}
+.text-font-identify{
+    display: flex;
+    justify-content: flex-start;
+    width: 180px;
+    font-size: 17px;
+    font-family: 'Microsoft YaHei';
+}
 </style>

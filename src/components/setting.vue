@@ -2,6 +2,11 @@
     <el-container>
         <!--头部目录区-->
         <my-header></my-header>
+        <div class="main-container">
+            <div class="userInfo-container">
+                
+            </div>
+        </div>
     </el-container>
 </template>
 
@@ -19,5 +24,14 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content:center;
+}
+.main-container{
+    width: 1060px;
+    margin: 0 auto;
+    height: 100%;
+}
+.userInfo-container{
+    margin-top: 20px;
+    border: solid 1px #e6e6e6;
 }
 </style>

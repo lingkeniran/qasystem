@@ -165,7 +165,7 @@
                                             </span>
                                         </div>
                                     </el-button> -->
-                                    <second-answer :q_id=item.q_id :replynumber=item.replynumber></second-answer>
+                                    <second-answer :q_id=item.q_id ></second-answer>
                                     <!-- <el-dialog
                                         :title='item.replynumber+"条评论"'
                                         :visible.sync="dialogVisible"

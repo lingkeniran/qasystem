@@ -7,11 +7,12 @@
             <div class="main-container"> 
                 <!--轮播广告图-->
                 <div class="block">
-                    <el-carousel height="90px">
+                    <el-carousel height="120px">
                         <el-carousel-item v-for="item in 4" :key="item">
-                            <h3 class="small">{{ item }}</h3>
+                            <h3 class="small"></h3>
                         </el-carousel-item>
                     </el-carousel>
+                    <!-- <my-swiper></my-swiper> -->
                 </div>
                 <div class="questionContainer"> 
                     <div class="questionContent">
@@ -30,16 +31,10 @@
                                             </div>
                                         </div>
                                         <div class="richContentTitle">
-                                            <a></a>{{item.q_title}}
+                                            {{item.q_title}}
                                         </div>
-                                        <!-- <div class="qTime">
-                                            提问时间：{{item.q_time}}
-                                        </div> -->
                                     </div>
                                     <div class="richContent"  @click="getQuestionDetail(item.q_id)">
-                                        <!-- <div class="richContentImage">
-                                            <img src="item.q_picture" width="200px">
-                                        </div> -->
                                         <div class="richContentInner">
                                             <div v-html="item.u_icon" class="uIcon">{{item.u_icon}}</div>
                                             <div>{{item.u_name}}：</div>
@@ -58,34 +53,6 @@
                                                     </span>
                                                 </div>
                                             </el-button>
-                                            <!-- <el-button type="text" @click="centerDialogVisible = true" v-if="item.isReported===0&&u_id!=item.u_id">
-                                                <div class="actionInner">
-                                                    <span>
-                                                        <img src="../assets/jubao.png" width="20px">
-                                                    </span>
-                                                    <div class="text">
-                                                        举报
-                                                    </div>
-                                                </div>
-                                            </el-button> -->
-                                            <!-- <el-dialog
-                                                title="举报"
-                                                :visible.sync="centerDialogVisible"
-                                                width="50%"
-                                                center
-                                                @close='closeDialog'
-                                                :close-on-click-modal='false'>
-                                                <el-input
-                                                    type="textarea"
-                                                    :rows="6"
-                                                    placeholder="请输入举报理由"
-                                                    v-model="textarea">
-                                                </el-input>
-                                                <span slot="footer" class="dialog-footer">
-                                                    <el-button @click="centerDialogVisible = false">取 消</el-button>
-                                                    <el-button type="primary" @click="centerDialogVisible = false;report(item.q_id)">确 定</el-button>
-                                                </span>
-                                            </el-dialog> -->
                                             <report v-if="item.isReported===0&&u_id!=item.u_id" :qId="item.q_id"></report>
                                         </div>
                                         <div class="latestReplyTime">
@@ -255,11 +222,15 @@
 <script>
 import myHeader from '../components/module/header.vue'
 import report from './module/report.vue'
+// import mySwiper from './module/swiper.vue'
+// import imageSlider from './module/ImageSlider.vue'
 import Qs from 'qs'
 export default {
     components: {
         myHeader,
         report,
+        // mySwiper,
+        // imageSlider
     },
     data() {
         return {
@@ -279,10 +250,7 @@ export default {
             input: '',
             centerDialogVisible: false,
             textarea: '',
-            u_id:window.sessionStorage.getItem('u_id')
-            // item:{
-                
-            // }
+            u_id:window.sessionStorage.getItem('u_id'),
         }
     },
     created(){
@@ -453,12 +421,14 @@ export default {
 }
 .main-container{
     width: 1060px;
+    height: 100%;
     /* display: flex; */
     /* align-items: flex-start; */
     margin: 0 auto;
 }
 .block{
     margin-bottom: 10px;
+    // height: 300px;
 }
 .el-carousel__item h3 {
     color: #475669;
@@ -467,11 +437,25 @@ export default {
     line-height: 150px;
     margin: 0;
   }
-.el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
+.el-carousel__item:nth-child(4n) {
+    background-image: url('./../assets/1.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 120px; 
 }
-.el-carousel__item:nth-child(2n+1) {
-    background-color: #d3dce6;
+.el-carousel__item:nth-child(4n+1) {
+    background-image: url('./../assets/2.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 120px; 
+}
+.el-carousel__item:nth-child(4n+2) {
+    background-image: url('./../assets/3.jpeg');
+    background-repeat: no-repeat;
+    background-size: 100% 120px; 
+}
+.el-carousel__item:nth-child(4n+3) {
+    background-image: url('./../assets/4.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 120px; 
 }
 // .richContentTop{
 //     display: flex;
@@ -597,7 +581,7 @@ export default {
     overflow:hidden;
     vertical-align:middle;
     display: inline-block;
-    width: 180px;
+    width: 160px;
     overflow: hidden;
 }
 .c-table{

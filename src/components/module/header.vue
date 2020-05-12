@@ -1,31 +1,21 @@
 <template>
     <!--头部目录区-->
-    <div>
+    <div class="el-header-container">
         <div class="el-header">
             <div class="logo">
-                <img src="../../assets/logo.png" alt="Q&A" width="100%">
+                <router-link to="/"><img src="../../assets/logo.png" alt="Q&A" width="100%"></router-link>
             </div>
             <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
                 <el-menu-item index="1" @click="toIndex()">首页</el-menu-item>
                 <!-- <el-menu-item index="2">问题列表</el-menu-item> -->
             </el-menu>
-            <el-input placeholder="搜索问题" v-model="content" >
+            <div class="askQues-container">
+                <el-input placeholder="搜索问题" v-model="content" >
                 <!-- <img src="../assets/sousuo.png" slot="suffix"> -->
                     <i slot="suffix" class="el-input__icon el-icon-search" @click="searchQues()"></i>
-            </el-input>
-            <!-- <el-button type="primary" icon="el-icon-search">搜索</el-button> -->
-            <!-- <el-button class="askBtn" type="primary" @click="centerDialogVisible = true">提问</el-button> -->
-                <!-- <el-dialog
-                    title="提问"
-                    :visible.sync="centerDialogVisible"
-                    width="750px"
-                    height="500px">
-                    <editor ></editor>
-                     <span slot="footer" class="dialog-footer">
-                        <el-button class="configBtn" type="primary" @click="askQuestion()">提 问</el-button>
-                    </!--> 
-                <!-- </el-dialog>  -->
-            <editorDialog class="askBtn"></editorDialog>
+                </el-input>
+                <editorDialog class="askBtn"></editorDialog>
+            </div>
             <div v-if="isLogin">
                 <el-dropdown >
                     <span  @click="gotoMessage()">
@@ -110,7 +100,7 @@ export default {
         },
         gotoUserPage(){
             let _this=this
-            _this.$router.push('/userpage')
+            _this.$router.push('/userpage_activeQuestions')
         },
         gotoSetting(){
             let _this=this
@@ -136,20 +126,6 @@ export default {
                 console.log(res.data.data.u_icon)
                 if(res.data.resultCode==20006){
                     _this.portrait=res.data.data.u_icon
-                // if(res.data.list.q_protected==0&&res.data.list.u_reported==0){
-                    // _this.portrait=res.data.data.list
-                    // console.log(_this.quesList)
-                    // if(res.data.data.list.q_finished==1){
-                    //     _this.isEnd=true
-                    // }else{
-                    //     _this.isEnd=false
-                    // }
-                    // if(res.data.data.list.isReported==1){
-                    //     _this.isReport=false
-                    // }else{
-                    //     _this.isReport=true
-                    // }
-                // }
                 }else{
                     console.log(res.resultCode)
                     alert('加载失败，请稍后再试')
@@ -187,25 +163,29 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.el-header-container{
+    width: 100%;
+}
 .el-header{
+    width: 100%;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
     justify-content: space-around;
     margin: 0 auto;
-    padding: 0 16px;
+    padding: 0 60px;
 }
 .logo{
     width: 130px;
-    margin-right: 60px;
+    margin-right: 20px;
     display: flex;
     align-items: center;
 }
 .el-menu-item{
     font-weight: bold;
     font-size: 18px;
-    margin-left: 10px;
-    margin-right: 10px;
+    // margin-left: 10px;
+    // margin-right: 10px;
 }
 .dropdownItem{
     display: flex;
@@ -217,8 +197,13 @@ export default {
     width: 20px;
     margin-right: 5px;
 }
+.askQues-container{
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
 .el-input{
-    margin-left: 50px;
+    // margin-left: 50px;
     width: 400px;
     height: 60px;
     display: flex;

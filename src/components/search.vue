@@ -7,9 +7,9 @@
             <div class="main-container"> 
                 <!--轮播广告图-->
                 <div class="block">
-                    <el-carousel height="90px">
+                    <el-carousel height="120px">
                         <el-carousel-item v-for="item in 4" :key="item">
-                            <h3 class="small">{{ item }}</h3>
+                            <h3 class="small"></h3>
                         </el-carousel-item>
                     </el-carousel>
                 </div>
@@ -481,11 +481,25 @@ export default {
     line-height: 150px;
     margin: 0;
   }
-.el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
+.el-carousel__item:nth-child(4n) {
+    background-image: url('./../assets/1.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 120px; 
 }
-.el-carousel__item:nth-child(2n+1) {
-    background-color: #d3dce6;
+.el-carousel__item:nth-child(4n+1) {
+    background-image: url('./../assets/2.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 120px; 
+}
+.el-carousel__item:nth-child(4n+2) {
+    background-image: url('./../assets/3.jpeg');
+    background-repeat: no-repeat;
+    background-size: 100% 120px; 
+}
+.el-carousel__item:nth-child(4n+3) {
+    background-image: url('./../assets/4.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 120px; 
 }
 // .richContentTop{
 //     display: flex;
@@ -610,6 +624,8 @@ export default {
     overflow:hidden;
     vertical-align:middle;
     display: inline-block;
+    width: 160px;
+    overflow: hidden;
 }
 .c-table{
     width: 280px;

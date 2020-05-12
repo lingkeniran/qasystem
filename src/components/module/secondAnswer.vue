@@ -7,12 +7,12 @@
                     <img src="../../assets/pinglun.png" width="20px">
                 </span>
                 <span class="text">
-                    {{replynumber}}条评论
+                    查看评论
                 </span>
-            </div>
+            </div> 
         </el-button> 
         <el-dialog
-            :title='replynumber+"条评论"'
+            title="评论"
             :visible.sync="dialogVisible"
             top="30px"
             width="60%">
@@ -78,7 +78,7 @@ import report from './report.vue'
 import littleReport from './littleReport.vue'
 export default {
     name:'secondAnswer',
-    props:['q_id','replynumber'],
+    props:['q_id'],
     components:{
         report,
         littleReport
@@ -87,7 +87,6 @@ export default {
         return{
             dialogVisible: false,
             q_id:this.q_id,
-            replynumber:this.replynumber,
             SecondReplyList:[],
             secondAnswerContent:'',
         }
@@ -96,11 +95,11 @@ export default {
         let q_id=this.q_id
         console.log('q_id',q_id)
         this.getQuesDetail(q_id)
+        // this.getsecondAnswerList()
     },
     mounted(){
     },
     updated(){
-        this.getsecondAnswerList()
     },
     methods:{
         getQuesDetail(q_id){
@@ -158,8 +157,6 @@ export default {
             console.log('一级回复id',q_id)
             let _this=this
             let data = {
-                page: 1,
-                number: 10,
                 q_id: q_id,
                 token: window.sessionStorage.getItem('token')
             }
@@ -170,11 +167,10 @@ export default {
             })
             .then(function(res) {
                 console.log('二级回答列表',res);
-                // console.log(res.data.resultCode)
                 if(res.data.resultCode==20006){
                 // if(res.data.list.q_protected==0&&res.data.list.u_reported==0){
                     _this.SecondReplyList=res.data.data
-                    // console.log(_this.quesList)
+                    console.log(_this.SecondReplyList)
                 // }
                 }else{
                     // console.log(res.resultCode)
