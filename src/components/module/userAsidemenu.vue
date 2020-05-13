@@ -13,9 +13,9 @@
                     <span>提问</span>
                 </template>
                 <el-menu-item-group el-menu-item-group>
-                    <el-menu-item index="userpage_activeQuestions">活跃问题</el-menu-item>
-                    <el-menu-item index="userpage_blockedQuestions">被屏蔽问题</el-menu-item>
-                    <el-menu-item index="userpage_terminatedQuestions">已终结问题</el-menu-item>
+                    <el-menu-item index="/userpage/activeQuestions">活跃问题</el-menu-item>
+                    <el-menu-item index="/userpage/blockedQuestions">被屏蔽问题</el-menu-item>
+                    <el-menu-item index="/userpage/terminatedQuestions">已终结问题</el-menu-item>
                 </el-menu-item-group>
             </el-submenu>
             <el-submenu index="2">
@@ -24,8 +24,8 @@
                     <span>回答</span>
                 </template>
                 <el-menu-item-group el-menu-item-group>
-                    <el-menu-item index="userpage_myAnswers">我的回答</el-menu-item>
-                    <el-menu-item index="userpage_blockedAnswers">被屏蔽回答</el-menu-item>
+                    <el-menu-item index="/userpage/myAnswers">我的回答</el-menu-item>
+                    <el-menu-item index="/userpage/blockedAnswers">被屏蔽回答</el-menu-item>
                 </el-menu-item-group>
             </el-submenu>
         </el-menu>

@@ -89,6 +89,7 @@
 <script>
 import $ from 'jquery';
 import identify from './module/identify.vue'
+import Qs from 'qs'
 var filename="";
 var flag=0;
 $(function () {
@@ -312,10 +313,54 @@ export default {
         	// }
         },
         register(){
+            let data={
+                u_name: $("#nickname").val(),
+                u_gender: $("#gender").val(),
+                u_phone: $("#phone").val(),
+                u_email: $("#email").val(),
+                u_pass: $("#password").val(),
+                picture:"'http://120.26.172.98:8080/QASystem/uploadImages/'+portrait.jpg"
+            }
+            let _this=this
             console.log(filename);
             console.log(flag);
-              
           	if(flag==0){
+                // this.$axios({
+                //     method: "post",
+                //     url: 'user/register',
+                //     data: Qs.stringify(data)
+                // })
+                // .then(function(res) {
+                //     console.log("注册",res);
+                //     // console.log(res.data.resultCode)
+                //     if(res.data.resultCode==10004){
+                //         alert("已向您邮箱发送激活链接，请前往激活");
+                //         _this.$router.push('/')
+                //     }else if(res.data.resultCode==10005){
+                //         _this.$message({
+                //         type: 'warning',
+                //         message: '注册失败!'
+                //         });
+                //     }else if(res.data.resultCode==10006){
+                //         _this.$message({
+                //         type: 'warning',
+                //         message: '该手机号已经注册过，可以直接登录!'
+                //         });
+                //     }else if(res.data.resultCode==10007){
+                //         _this.$message({
+                //         type: 'warning',
+                //         message: '该邮箱已经注册过，可以直接登录!'
+                //         });
+                //     }else if(res.data.resultCode==10009){
+                //         _this.$message({
+                //         type: 'warning',
+                //         message: '注册信息不全!'
+                //         });
+                //     }
+                // })
+                // .catch(function(err) {
+                //     console.log(err);
+                // })
           		$.ajax({
                     type: "POST",
                     url: "http://120.26.172.98:8080/QASystem/user/register",
@@ -326,7 +371,6 @@ export default {
                     	u_phone: $("#phone").val(),
                         u_email: $("#email").val(),
                         u_pass: $("#password").val(),
-                        RandomCode: this.identifyCode,
                         picture:"'http://120.26.172.98:8080/QASystem/uploadImages/'+portrait.jpg"
                     },
                     success: function (json) {
@@ -346,6 +390,42 @@ export default {
                 });
           	}
           	else if(flag==1){
+                // this.$axios({
+                //     method: "post",
+                //     url: 'user/register',
+                //     data: Qs.stringify(data)
+                // })
+                // .then(function(res) {
+                //     console.log("注册",res);
+                //     // console.log(res.data.resultCode)
+                //     if(res.data.resultCode==10004){
+                //         alert("已向您邮箱发送激活链接，请前往激活");
+                //         _this.$router.push('/')
+                //     }else if(res.data.resultCode==10005){
+                //         _this.$message({
+                //         type: 'warning',
+                //         message: '注册失败!'
+                //         });
+                //     }else if(res.data.resultCode==10006){
+                //         _this.$message({
+                //         type: 'warning',
+                //         message: '该手机号已经注册过，可以直接登录!'
+                //         });
+                //     }else if(res.data.resultCode==10007){
+                //         _this.$message({
+                //         type: 'warning',
+                //         message: '该邮箱已经注册过，可以直接登录!'
+                //         });
+                //     }else if(res.data.resultCode==10009){
+                //         _this.$message({
+                //         type: 'warning',
+                //         message: '注册信息不全!'
+                //         });
+                //     }
+                // })
+                // .catch(function(err) {
+                //     console.log(err);
+                // })
           		$.ajax({
                     type: "POST",
                     url: "http://120.26.172.98:8080/QASystem/user/register",
@@ -356,7 +436,6 @@ export default {
                     	u_phone: $("#phone").val(),
                         u_email: $("#email").val(),
                         u_pass: $("#password").val(),
-                        RandomCode: $("#vertification").val(),
                         picture:'http://120.26.172.98:8080/QASystem/uploadImages/'+filename
                     },
                     success: function (json) {

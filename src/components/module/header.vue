@@ -100,7 +100,7 @@ export default {
         },
         gotoUserPage(){
             let _this=this
-            _this.$router.push('/userpage_activeQuestions')
+            _this.$router.push('/userpage/activeQuestions')
         },
         gotoSetting(){
             let _this=this

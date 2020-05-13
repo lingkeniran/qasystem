@@ -76,6 +76,43 @@ export default {
         myHeader,
         userAsidemenu,
     },
+    data(){
+        return{}
+    },
+    created(){
+        this.getBlockedQues()
+    },
+    methods:{
+        getBlockedQues(){
+            let data = {
+                page: 1,
+                number: 10,
+                token: window.sessionStorage.getItem('token')
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/activeQuestion',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log("活跃问题列表",res);
+                // console.log(res.data.resultCode)
+                if(res.data.resultCode==20006){
+                }else{
+                    console.log(res.resultCode)
+                    if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+                        alert('登录过期,请重新登录')
+                    }else if(res.data.resultCode==20007){
+                        alert('加载失败，请稍后再试')
+                    }
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        }
+    }
 }
 </script>
 

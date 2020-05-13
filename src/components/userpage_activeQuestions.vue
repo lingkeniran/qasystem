@@ -66,6 +66,55 @@ export default {
         myHeader,
         userAsidemenu,
     },
+    created(){
+        this.getActiveQues()
+    },
+    methods:{
+        getActiveQues(){
+            let data = {
+                page: 1,
+                number: 10,
+                token: window.sessionStorage.getItem('token')
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/activeQuestion',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log("活跃问题列表",res);
+                // console.log(res.data.resultCode)
+                if(res.data.resultCode==20006){
+                // if(res.data.list.q_protected==0&&res.data.list.u_reported==0){
+                    _this.quesList=res.data.data.list
+                    _this.total=res.data.data.totalRow
+                    // console.log(_this.quesList)
+                    if(res.data.data.list.q_finished==1){
+                        _this.isEnd=true
+                    }else{
+                        _this.isEnd=false
+                    }
+                    if(res.data.data.list.isReported==1){
+                        _this.isReport=false
+                    }else{
+                        _this.isReport=true
+                    }
+                // }
+                }else{
+                    console.log(res.resultCode)
+                    if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+                        alert('登录过期,请重新登录')
+                    }else if(res.data.resultCode==20007){
+                        alert('加载失败，请稍后再试')
+                    }
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        },
+    }
 }
 </script>
 

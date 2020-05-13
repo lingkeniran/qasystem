@@ -1,33 +1,37 @@
 <template>
     <div>
-        <el-button type="text" class="little-el-button" @click="centerDialogVisible = true">
-            <div class="actionInner">
-                <span>
-                    <img src="../../assets/jubao.png" width="15px">
-                </span>
-                <div class="little-text">
-                    举报
+        <div @change="report()" v-if="isReport">
+            <el-button type="text" class="little-el-button" @click="centerDialogVisible = true">
+                <div class="actionInner">
+                    <span>
+                        <img src="../../assets/jubao.png" width="15px">
+                    </span>
+                    <div class="little-text">
+                        举报
+                    </div>
                 </div>
-            </div>
-        </el-button>
-        <el-dialog
-            title="举报"
-            :visible.sync="centerDialogVisible"
-            width="50%"
-            center
-            @close='closeDialog'
-            :close-on-click-modal='false'>
-            <el-input
-                type="textarea"
-                :rows="6"
-                placeholder="请输入举报理由"
-                v-model="textarea">
-            </el-input>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="centerDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="centerDialogVisible = false;report()">确 定</el-button>
-            </span>
-        </el-dialog>
+            </el-button>
+            <el-dialog
+                title="举报"
+                :visible.sync="centerDialogVisible"
+                width="50%"
+                center
+                @close='closeDialog'
+                :close-on-click-modal='false'
+                append-to-body>
+                <el-input
+                    type="textarea"
+                    :rows="6"
+                    placeholder="请输入举报理由"
+                    v-model="textarea">
+                </el-input>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="centerDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="centerDialogVisible = false;report()">确 定</el-button>
+                </span>
+            </el-dialog>
+        </div>
+        <div @change="report()" v-else></div>
     </div>
 </template>
 
@@ -41,13 +45,14 @@ export default {
         return{
             centerDialogVisible:false,
             textarea: '',
-            qId:this.qId
+            qId:this.qId,
+            isReport:true
         }
     },
     methods:{
         closeDialog(){
             this.textarea="";
-            this.reload()
+            // this.reload()
         },
         report(){
             let _this=this
@@ -61,14 +66,20 @@ export default {
             }
             var token=window.sessionStorage.getItem('token')
             if(token==null||token==undefined||token==""){
-                alert('请先登录')
+                _this.$message({
+                    type: 'warning',
+                    message: '请先登录!'
+                });
             }
             if(_this.textarea==""){
-                alert('举报内容不能为空！')
+                _this.$message({
+                    type: 'warning',
+                    message: '举报内容不能为空!'
+                });
             }
             if(token!=null||token!=undefined||token!="")
             {
-                this.$axios({
+                _this.$axios({
                 method: "post",
                 url: 'user/report',
                 data: Qs.stringify(data)
@@ -77,12 +88,22 @@ export default {
                     console.log(res);
                     console.log(res.data.resultCode)
                     if(res.data.resultCode==20013){
-                        alert('举报成功!')
+                        _this.$message({
+                            type: 'success',
+                            message: '举报成功!'
+                        });
+                        _this.isReport=false
                     }
                     else if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
-                        alert('登录失效，请重新登录')
+                        _this.$message({
+                            type: 'warning',
+                            message: '登录失效，请重新登录!'
+                        });
                     }else if(res.data.resultCode==20014){
-                        alert('举报失败，请稍后再试')
+                        _this.$message({
+                            type: 'warning',
+                            message: '举报失败，请稍后再试!'
+                        });
                     }
                 })
                 .catch(function(err) {

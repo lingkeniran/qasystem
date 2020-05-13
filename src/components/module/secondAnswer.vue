@@ -15,14 +15,18 @@
             title="评论"
             :visible.sync="dialogVisible"
             top="30px"
-            width="60%">
+            width="60%"
+            append-to-body>
             <div class="second-wrapper">
-                <div class="secondAnswerContainer"  v-for="i in SecondReplyList.list" :key="i.q_id" index='i.q_id'>
+                <div class="secondAnswerContainer"  v-for="i in SecondReplyList" :key="i.q_id" index='i.q_id'>
                     <div class="secondAnswerItem">
                         <div class="firstAnswerItem-top">
                             <div class="firstAnswerItem-top-userInfo">
                                 <div v-html="i.u_icon" class="uIcon">{{i.u_icon}}</div>
                                 <div class="u-name">{{i.u_name}}</div>
+                                <div class="text-reply">回复</div>
+                                <div v-html="i.replyicon" class="uIcon">{{i.replyicon}}</div>
+                                <div class="u-name">{{i.replyname}}</div>
                             </div>
                             <div class="firstAnswerItem-top-likeNumber">
                                 {{i.q_like}}个人赞同该回答
@@ -33,8 +37,8 @@
                         </div>
                     </div>
                     <div class="richContentAction">
-                        <el-button type="text" class="little-el-button">
-                            <div class="actionInner">
+                        <!-- <el-button type="text" class="little-el-button"  @click="like(i.q_id,i.isLiked)">
+                            <div class="actionInner" v-if="i.isLiked===0">
                                 <span>
                                     <img src="../../assets/zan.png" width="15px">
                                 </span>
@@ -42,21 +46,18 @@
                                     赞同
                                 </div>
                             </div>
-                        </el-button>
-                        <el-button type="text" class="little-el-button">
-                            <div class="actionInner">
+                            <div class="actionInner" v-if="i.isLiked===1">
                                 <span>
-                                    <img src="../../assets/huifu.png" width="15px">
+                                    <img src="../../assets/zan1.png" width="15px">
                                 </span>
                                 <div class="little-text">
-                                    回复
+                                    取消赞同
                                 </div>
                             </div>
-                        </el-button>
+                        </el-button> -->
+                        <little-like :q_id="i.q_id" :isLike="i.isLiked"></little-like>
+                        <reply-answer :q_id="i.q_id"></reply-answer>
                         <littleReport v-if="i.isReported===0&&u_id!=i.u_id" :qId="i.q_id"></littleReport>
-                    </div>
-                    <div>
-                        
                     </div>
                 </div>
                 <div class="writeSecondAnswer">
@@ -76,12 +77,16 @@
 import Qs from 'qs'
 import report from './report.vue'
 import littleReport from './littleReport.vue'
+import replyAnswer from './replyAnswer.vue'
+import littleLike from './littleLike.vue'
 export default {
     name:'secondAnswer',
     props:['q_id'],
     components:{
         report,
-        littleReport
+        littleReport,
+        replyAnswer,
+        littleLike,
     },
     data(){
         return{
@@ -89,6 +94,9 @@ export default {
             q_id:this.q_id,
             SecondReplyList:[],
             secondAnswerContent:'',
+            isClick:'',
+            isReply:'',
+            replyAnswerDialogVisible:''
         }
     }, 
     created(){
@@ -238,6 +246,71 @@ export default {
                     console.log(err);
                 })
         },
+        like(q_id,isClick){
+            console.log(q_id,isClick)
+            let _this=this
+            if(isClick==0){
+                isClick=1
+                let data = {
+                    action: isClick,
+                    q_id: q_id,
+                    token: window.sessionStorage.getItem('token')
+                }
+                this.$axios({
+                    method: "post",
+                    url: 'user/agree',
+                    data: Qs.stringify(data)
+                })
+                .then(function(res) {
+                    if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+                        _this.$message({
+                            type: 'warning',
+                            message: '登录失效，请重新登录!'
+                        });
+                    }else if(res.data.resultCode==20019){
+                        _this.$message({
+                            type: 'warning',
+                            message: '点赞失败!'
+                        });
+                    }
+                })
+                .catch(function(err) {
+                    console.log(err);
+                })
+            }else if(isClick==1){
+                isClick=0
+                console.log('变化后的isClick',isClick)
+                let data = {
+                    action: isClick,
+                    q_id: q_id,
+                    token: window.sessionStorage.getItem('token')
+                }
+                this.$axios({
+                    method: "post",
+                    url: 'user/agree',
+                    data: Qs.stringify(data)
+                })
+                .then(function(res) {
+                    console.log('是否点赞成功',res)
+                    if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+                        _this.$message({
+                            type: 'warning',
+                            message: '登录失效，请重新登录!'
+                        });
+                    }
+                })
+                .catch(function(err) {
+                    console.log(err);
+                })
+            }
+        },
+        replySecondAnswer(i,q_id){
+            console.log(i)
+            console.log(q_id)
+            this.isReply=true
+            console.log(this.isReply)
+            this.replyAnswerDialogVisible=true
+        }
     }
 }
 </script>
@@ -297,6 +370,12 @@ export default {
     margin-left: 5px;
     color: gray;
 }
+.text-reply{
+    font-size: 16px;
+    color: rgb(39, 39, 39);
+    margin-left: 10px;
+    margin-right: 10px;
+}
 .firstAnswerItem-top-likeNumber{
     font-size: 10px;
     color: grey;
@@ -317,5 +396,11 @@ export default {
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
+}
+.isReply{
+    display: flex;
+    flex-wrap: nowrap;
+    margin-right: 20px;
+    margin-bottom: 2px;
 }
 </style>

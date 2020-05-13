@@ -26,7 +26,7 @@ import check_questions from '../managerComponents/check_questions.vue'
 import check_answers from '../managerComponents/check_answers.vue'
 
 // import swiper from '../components/module/swiper.vue'
-
+// import like from '../components/module/like.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -82,23 +82,23 @@ const routes = [
     component: secondAnswer
   },
   {
-    path: '/userpage_activeQuestions',
+    path: '/userpage/activeQuestions',
     name: 'userpage_activeQuestions',
     component: userpage_activeQuestions
   },{
-    path: '/userpage_blockedQuestions',
+    path: '/userpage/blockedQuestions',
     name: 'userpage_blockedQuestions',
     component: userpage_blockedQuestions
   },{
-    path: '/userpage_terminatedQuestions',
+    path: '/userpage/terminatedQuestions',
     name: 'userpage_terminatedQuestions',
     component: userpage_terminatedQuestions
   },{
-    path: '/userpage_myAnswers',
+    path: '/userpage/myAnswers',
     name: 'userpage_myAnswers',
     component: userpage_myAnswers
   },{
-    path: '/userpage_blockedAnswers',
+    path: '/userpage/blockedAnswers',
     name: 'userpage_blockedAnswers',
     component: userpage_blockedAnswers
   },
@@ -134,9 +134,9 @@ const routes = [
     component:check_answers
   },
   // {
-  //   path: 'swiper',
-  //   name: 'swiper',
-  //   component:swiper
+  //   path: 'like',
+  //   name: 'like',
+  //   component:like
   // },
 ]
 

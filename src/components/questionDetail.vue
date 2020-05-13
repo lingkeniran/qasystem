@@ -145,61 +145,8 @@
                             </div>
                             <div class="firstAnswerItem-bottom">
                                 <div class="richContentAction">
-                                    <el-button type="text">
-                                        <div class="actionInner">
-                                            <span>
-                                                <img src="../assets/zan.png" width="20px">
-                                            </span>
-                                            <div class="text">
-                                                赞同
-                                            </div>
-                                        </div>
-                                    </el-button>
-                                    <!-- <el-button type="text" @click="dialogVisible = true;getsecondAnswerList(item.q_id)">
-                                        <div class="actionInner">
-                                            <span>
-                                                <img src="../assets/pinglun.png" width="20px">
-                                            </span>
-                                            <span class="text">
-                                                {{item.replynumber}}条评论
-                                            </span>
-                                        </div>
-                                    </el-button> -->
+                                    <like :q_id=item.q_id :isLike=item.isLiked ></like>
                                     <second-answer :q_id=item.q_id ></second-answer>
-                                    <!-- <el-dialog
-                                        :title='item.replynumber+"条评论"'
-                                        :visible.sync="dialogVisible"
-                                        top="30px"
-                                        width="60%"
-                                        :open="openSecondAnswerWrapper(item.q_id)"
-                                        :close-on-click-modal='false'>
-                                        <div class="second-wrapper">
-                                            <div class="secondAnswerContainer">
-                                                <div class="secondAnswerItem" v-for="i in SecondReplyList.list" :key="i.q_id" index='i.q_id'>
-                                                    <div class="firstAnswerItem-top">
-                                                        <div class="firstAnswerItem-top-userInfo">
-                                                            <div v-html="i.u_icon" class="uIcon">{{i.u_icon}}</div>
-                                                            <div class="u-name">{{i.u_name}}</div>
-                                                        </div>
-                                                        <div class="firstAnswerItem-top-likeNumber">
-                                                            {{i.q_like}}个人赞同该回答
-                                                        </div>
-                                                    </div>
-                                                    <div class="firstAnswerItem-content" v-html="i.q_content">
-                                                        {{i.q_content}}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="writeSecondAnswer">
-                                                <el-input type="textarea"
-                                                    autosize
-                                                    placeholder="请写下您的评论..."
-                                                    v-model="secondAnswerContent">
-                                                </el-input>
-                                                <el-button class="submitSecondAnswer" type="primary" @click="submitSecondAnswer()">发布</el-button>
-                                            </div>
-                                        </div>
-                                    </el-dialog> -->
                                     <report v-if="item.isReported===0&&u_id!=item.u_id" :qId="item.q_id"></report>
                                 </div>
                                 <div class="firstAnswerItem-latestReplyTime">
@@ -223,6 +170,7 @@ import myHeader from '../components/module/header.vue'
 import shrinkView from '../components/module/shrinkView.vue'
 import report from '../components/module/report.vue'
 import secondAnswer from '../components/module/secondAnswer.vue'
+import like from '../components/module/like.vue'
 import Qs from 'qs'
 // import Vue from 'vue'
 // import { Message } from 'element-ui'
@@ -235,7 +183,8 @@ export default {
         quillEditor,
         shrinkView,
         report,
-        secondAnswer
+        secondAnswer,
+        like,
     },
     data(){
         return{
@@ -260,10 +209,15 @@ export default {
             open: false, //收缩的flag,
             SecondReplyList:[], //二级回复列表
             secondAnswerContent:'', //二级回复的内容
+            isClick:'', //是否点赞
         }
     },
     created(){
         
+    },
+    updated(){
+        // this.like()
+        // this.getQuesDetail()
     },
     mounted(){
         let q_id=this.$route.query.q_id
@@ -567,44 +521,67 @@ export default {
         cancelAnswer(){
             this.answer_flag=true
         },
-        // getsecondAnswerList(q_id){
-        //     // 获取二级回复列表
-        //     console.log('一级回复id',q_id)
+        // like(q_id,isLike){
+        //     var isLike=isLike
+        //     console.log('点赞的回答id',q_id,'初始点赞状态',isLike)
         //     let _this=this
-        //     let data = {
-        //         page: 1,
-        //         number: 10,
-        //         q_id: q_id,
-        //         token: window.sessionStorage.getItem('token')
-        //     }
-        //     this.$axios({
-        //         method: "post",
-        //         url: 'user/getReplyDetail',
-        //         data: Qs.stringify(data)
-        //     })
-        //     .then(function(res) {
-        //         console.log('回答详情',res);
-        //         // console.log(res.data.resultCode)
-        //         if(res.data.resultCode==20006){
-        //         // if(res.data.list.q_protected==0&&res.data.list.u_reported==0){
-        //             _this.SecondReplyList=res.data.data.SecondReplyList
-        //             // console.log(_this.quesList)
-        //         // }
-        //         }else{
-        //             // console.log(res.resultCode)
-        //             if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
-        //                 alert('登录过期,请重新登录')
-        //             }else if(res.data.resultCode==20005){
-        //                 alert('加载失败，请稍后再试')
-        //             }
+        //     if(isLike==0){
+        //         isLike=1
+        //         console.log('变化后的isLike',isLike)
+        //         let data = {
+        //             action: isLike,
+        //             q_id: q_id,
+        //             token: window.sessionStorage.getItem('token')
         //         }
-        //     })
-        //     .catch(function(err) {
-        //         console.log(err);
-        //     })
-        // },
-        // submitSecondAnswer(q_id){
-        //     console.log('写评论对应的回答id',q_id)
+        //         this.$axios({
+        //             method: "post",
+        //             url: 'user/agree',
+        //             data: Qs.stringify(data)
+        //         })
+        //         .then(function(res) {
+        //             console.log('是否点赞成功',res)
+        //             if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+        //                 _this.$message({
+        //                     type: 'warning',
+        //                     message: '登录失效，请重新登录!'
+        //                 });
+                        
+        //             }else if(res.data.resultCode==20019){
+        //                 _this.$message({
+        //                     type: 'warning',
+        //                     message: '点赞失败!'
+        //                 });
+        //             }
+        //         })
+        //         .catch(function(err) {
+        //             console.log(err);
+        //         })
+        //     }else if(isLike==1){
+        //         isLike=0
+        //         console.log('变化后的isLike',isLike)
+        //         let data = {
+        //             action: isLike,
+        //             q_id: q_id,
+        //             token: window.sessionStorage.getItem('token')
+        //         }
+        //         this.$axios({
+        //             method: "post",
+        //             url: 'user/agree',
+        //             data: Qs.stringify(data)
+        //         })
+        //         .then(function(res) {
+        //             console.log('是否点赞成功',res)
+        //             if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+        //                 _this.$message({
+        //                     type: 'warning',
+        //                     message: '登录失效，请重新登录!'
+        //                 });
+        //             }
+        //         })
+        //         .catch(function(err) {
+        //             console.log(err);
+        //         })
+        //     }
         // },
         openSecondAnswerWrapper(q_id){
             console.log(q_id)
