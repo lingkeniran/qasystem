@@ -4,3 +4,10 @@ html,body,#app{
     margin: 0;
     padding: 0;
 }
+.el-message-box__btns{
+    display: flex;
+    justify-content: center;
+}
+.el-button--mini, .el-button--small{
+    font-size: 15px;
+}

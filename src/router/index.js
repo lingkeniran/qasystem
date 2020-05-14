@@ -25,11 +25,19 @@ import check_userReport from '../managerComponents/check_userReport.vue'
 import check_questions from '../managerComponents/check_questions.vue'
 import check_answers from '../managerComponents/check_answers.vue'
 
+// 组件测试
+import uploadImg from '../components/module/uploadImg.vue'
 // import swiper from '../components/module/swiper.vue'
 // import like from '../components/module/like.vue'
 Vue.use(VueRouter)
 
 const routes = [
+  // 组件测试
+  {
+    path: '/uploadImg',
+    name: 'uploadImg',
+    component: uploadImg
+  },
   // 用户界面
   {
     path: '/login',

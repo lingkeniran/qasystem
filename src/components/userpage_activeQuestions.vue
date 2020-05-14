@@ -4,8 +4,10 @@
         <my-header></my-header>
         <div class="main-container">
             <div class="userInfo">
-                <img class="userIcon" src="../assets/portrait.jpg" width="40px" height="40px">
-                <div class="userNickname">用户昵称</div>
+                <span>
+                    <img class="userIcon" :src="portrait" width="40px" height="40px">
+                </span>
+                <div class="userNickname">{{u_name}}</div>
             </div>
             <el-main class="ques-answer-container">
                 <div class="asidemenu">
@@ -18,9 +20,9 @@
                         <el-breadcrumb-item>活跃问题</el-breadcrumb-item>
                     </el-breadcrumb>
                     <div class="content">
-                        <div class="content-question">
+                        <div class="content-question" v-for="item in quesList" :key="item.q_id" @click="getQuestionDetail(item.q_id)">
                             <div class="content-question-title">
-                                如何度过大学四年？
+                                {{item.q_title}}
                             </div>
                             <div class="richContentBottom">
                                 <div class="richContentAction">
@@ -30,30 +32,31 @@
                                                 <img src="../assets/answer.png" width="20px">
                                             </span>
                                             <span class="text">
-                                                条回答
+                                                {{item.replynumber}}条回答
                                             </span>
                                         </div>
                                     </el-button>
                                 </div>
                                 <div class="latestReplyTime">
-                                    更新时间：
+                                    更新时间：{{item.latestReplyTime}}
                                 </div>
                             </div>
                         </div>
                         <div class="paging">
                             <el-pagination
-                                @size-change="handleSizeChange"
                                 @current-change="handleCurrentChange"
                                 :current-page.sync="currentPage3"
                                 :hide-on-single-page=true
-                                :page-size="100"
+                                :page-size="10"
                                 layout="prev, pager, next, jumper"
-                                :total="1000">
+                                :total="total">
                             </el-pagination>
                         </div>
                     </div>
                 </div>
             </el-main>
+            <!-- 返回顶部 -->
+            <el-backtop></el-backtop>
         </div>
     </el-container>
 </template>
@@ -61,16 +64,26 @@
 <script>
 import myHeader from '../components/module/header.vue'
 import userAsidemenu from '../components/module/userAsidemenu.vue'
+import Qs from 'qs'
 export default {
     components: {
         myHeader,
         userAsidemenu,
     },
+    data(){
+        return{
+            total:'',
+            quesList:[],
+            portrait:'',
+            u_name:'',
+        }
+    },
     created(){
-        this.getActiveQues()
+        this.getQuesList()
+        this.getUserInfo()
     },
     methods:{
-        getActiveQues(){
+        getQuesList(){
             let data = {
                 page: 1,
                 number: 10,
@@ -84,34 +97,96 @@ export default {
             })
             .then(function(res) {
                 console.log("活跃问题列表",res);
-                // console.log(res.data.resultCode)
+                _this.quesList=res.data.data.list
+                _this.total=res.data.data.totalRow
+                if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+                    _this.$message({
+                        type: 'warning',
+                        message: '登录失效，请重新登录!'
+                    });
+                }else if(res.data.resultCode==20007){
+                    _this.$message({
+                        type: 'info',
+                        message: '您没有活跃的问题，快去提问吧ヾ(๑╹◡╹)ﾉ"'
+                    });  
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        },
+        handleCurrentChange(e){
+            console.log(e)
+            // this.listPage.page=e
+            let data = {
+                page: e,
+                number: 10,
+                token: window.sessionStorage.getItem('token')
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/activeQuestion',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log("活跃问题列表",res);
                 if(res.data.resultCode==20006){
-                // if(res.data.list.q_protected==0&&res.data.list.u_reported==0){
                     _this.quesList=res.data.data.list
                     _this.total=res.data.data.totalRow
-                    // console.log(_this.quesList)
-                    if(res.data.data.list.q_finished==1){
-                        _this.isEnd=true
-                    }else{
-                        _this.isEnd=false
-                    }
-                    if(res.data.data.list.isReported==1){
-                        _this.isReport=false
-                    }else{
-                        _this.isReport=true
-                    }
-                // }
                 }else{
-                    console.log(res.resultCode)
                     if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
-                        alert('登录过期,请重新登录')
+                        _this.$message({
+                            type: 'warning',
+                            message: '登录失效，请重新登录!'
+                        });
                     }else if(res.data.resultCode==20007){
-                        alert('加载失败，请稍后再试')
+                        _this.$message({
+                            type: 'info',
+                            message: '您没有活跃的问题，快去提问吧ヾ(๑╹◡╹)ﾉ"'
+                        });  
                     }
                 }
             })
             .catch(function(err) {
                 console.log(err);
+            })
+        },
+        getUserInfo(){
+            let data = {
+                token: window.sessionStorage.getItem('token')
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/getUserInfo',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log("个人界面-用户信息",res);
+                // console.log(res.data.data.u_icon)
+                if(res.data.resultCode==20006){
+                    _this.portrait=res.data.data.u_icon
+                    _this.u_name=res.data.data.u_name
+                }else{
+                    console.log(res.resultCode)
+                    this.$message.error('登录失效，请重新登录')
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        },
+        getQuestionDetail(q_id){
+            let _this=this
+            _this.$router.push({
+                path:'/detail',
+                name:'detail',
+                //参数
+                query:{
+                    q_id:q_id,
+                    // dataObj:{}
+                }
             })
         },
     }
@@ -125,10 +200,12 @@ export default {
     justify-content:center;
 }
 .main-container{
+    padding-bottom: 20px;
     width: 1060px;
     margin: 0 auto;
 }
 .userInfo{
+    padding-left: 20px;
     margin-top: 20px;
     width: 100%;
     border: solid 1px #e6e6e6;
@@ -143,6 +220,7 @@ export default {
 .userNickname{
     margin-left: 15px;
     font-weight: bold;
+    font-size: 20px;
 }
 .ques-answer-container{
     padding: 0;
@@ -221,5 +299,6 @@ export default {
     font-size: 12px;
     color: grey;
     margin-left: 15px;
+    margin-right: 15px;
 }
 </style>

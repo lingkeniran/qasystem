@@ -41,7 +41,7 @@
                                             <img src="item.q_picture" width="200px">
                                         </div> -->
                                         <div class="richContentInner">
-                                            <div v-html="item.u_icon" class="uIcon">{{item.u_icon}}</div>
+                                            <img :src="item.u_icon" class="uIcon">
                                             <div>{{item.u_name}}：</div>
                                             <div  v-html="item.q_content">{{item.q_content}}</div>
                                         </div>
@@ -136,7 +136,7 @@
                                         <td>
                                             <span>
                                                 <span class="c-index c-index-hot1 c-gap-icon-right-small">1</span>
-                                                <a class="hotListContent" href="">{{hotList[0].q_title}}</a>
+                                                <a class="hotListContent"  @click="getQuestionDetail(hotList[0].q_id)">{{hotList[0].q_title}}</a>
                                             </span>
                                         </td>
                                         <td class="opr-toplist1-right opr-toplist1-right-hot">
@@ -148,7 +148,7 @@
                                         <td>
                                             <span>
                                                 <span class="c-index c-index-hot2 c-gap-icon-right-small">2</span>
-                                                <a class="hotListContent" href="">{{hotList[1].q_title}}</a>
+                                                <a class="hotListContent" @click="getQuestionDetail(hotList[1].q_id)">{{hotList[1].q_title}}</a>
                                             </span>
                                         </td>
                                         <td class="opr-toplist1-right opr-toplist1-right-hot">
@@ -160,7 +160,7 @@
                                         <td>
                                             <span>
                                                 <span class="c-index c-index-hot3 c-gap-icon-right-small">3</span>
-                                                <a class="hotListContent" href="">{{hotList[2].q_title}}</a>
+                                                <a class="hotListContent"  @click="getQuestionDetail(hotList[2].q_id)">{{hotList[2].q_title}}</a>
                                             </span>
                                         </td>
                                         <td class="opr-toplist1-right opr-toplist1-right-hot">
@@ -172,7 +172,7 @@
                                         <td>
                                             <span>
                                                 <span class="c-index c-gap-icon-right-small">4</span>
-                                                <a class="hotListContent" href="">{{hotList[3].q_title}}</a>
+                                                <a class="hotListContent"  @click="getQuestionDetail(hotList[3].q_id)">{{hotList[3].q_title}}</a>
                                             </span>
                                         </td>
                                         <td class="opr-toplist1-right opr-toplist1-right-hot">
@@ -184,7 +184,7 @@
                                         <td>
                                             <span>
                                                 <span class="c-index c-gap-icon-right-small">5</span>
-                                                <a class="hotListContent" href="">{{hotList[4].q_title}}</a>
+                                                <a class="hotListContent"  @click="getQuestionDetail(hotList[4].q_id)">{{hotList[4].q_title}}</a>
                                             </span>
                                         </td>
                                         <td class="opr-toplist1-right opr-toplist1-right-hot">
@@ -196,7 +196,7 @@
                                         <td>
                                             <span>
                                                 <span class="c-index c-gap-icon-right-small">6</span>
-                                                <a class="hotListContent" href="">{{hotList[5].q_title}}</a>
+                                                <a class="hotListContent"  @click="getQuestionDetail(hotList[5].q_id)">{{hotList[5].q_title}}</a>
                                             </span>
                                         </td>
                                         <td class="opr-toplist1-right opr-toplist1-right-hot">
@@ -208,7 +208,7 @@
                                         <td>
                                             <span>
                                                 <span class="c-index c-gap-icon-right-small">7</span>
-                                                <a class="hotListContent" href="">{{hotList[6].q_title}}</a>
+                                                <a class="hotListContent"  @click="getQuestionDetail(hotList[6].q_id)">{{hotList[6].q_title}}</a>
                                             </span>
                                         </td>
                                         <td class="opr-toplist1-right opr-toplist1-right-hot">
@@ -220,7 +220,7 @@
                                         <td>
                                             <span>
                                                 <span class="c-index c-gap-icon-right-small">8</span>
-                                                <a class="hotListContent" href="">{{hotList[7].q_title}}</a>
+                                                <a class="hotListContent"  @click="getQuestionDetail(hotList[7].q_id)">{{hotList[7].q_title}}</a>
                                             </span>
                                         </td>
                                         <td class="opr-toplist1-right opr-toplist1-right-hot">
@@ -232,7 +232,7 @@
                                         <td>
                                             <span>
                                                 <span class="c-index c-gap-icon-right-small">9</span>
-                                                <a class="hotListContent" href="">{{hotList[8].q_title}}</a>
+                                                <a class="hotListContent"  @click="getQuestionDetail(hotList[8].q_id)">{{hotList[8].q_title}}</a>
                                             </span>
                                         </td>
                                         <td class="opr-toplist1-right opr-toplist1-right-hot">
@@ -244,7 +244,7 @@
                                         <td>
                                             <span>
                                                 <span class="c-index c-index-hot10 c-gap-icon-right-small">10</span>
-                                                <a class="hotListContent" href="">{{hotList[9].q_title}}</a>
+                                                <a class="hotListContent"  @click="getQuestionDetail(hotList[9].q_id)">{{hotList[9].q_title}}</a>
                                             </span>
                                         </td>
                                         <td class="opr-toplist1-right opr-toplist1-right-hot">
@@ -531,6 +531,8 @@ export default {
 }
 .uIcon{
     margin-right: 10px;
+    height: 25px;
+    width: 25px;
 }
 .richContentBottom{
     display: flex;

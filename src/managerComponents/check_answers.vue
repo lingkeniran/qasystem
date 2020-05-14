@@ -17,7 +17,7 @@ export default {
     },
     components:{
         managerHeader,
-        managerAsidemenu
+        managerAsidemenu,
     },
     methods:{}
 }

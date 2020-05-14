@@ -4,8 +4,10 @@
         <my-header></my-header>
         <div class="main-container">
             <div class="userInfo">
-                <img class="userIcon" src="../assets/portrait.jpg" width="40px" height="40px">
-                <div class="userNickname">用户昵称</div>
+                <span>
+                    <img class="userIcon" :src="portrait" width="40px" height="40px">
+                </span>
+                <div class="userNickname">{{u_name}}</div>
             </div>
             <el-main class="ques-answer-container">
                 <div class="asidemenu">
@@ -18,52 +20,46 @@
                         <el-breadcrumb-item>我的回答</el-breadcrumb-item>
                     </el-breadcrumb>
                     <div class="content">
-                        <div class="content-question">
+                        <div class="content-question" v-for="item in quesList" :key="item.answerid" @click="getQuestionDetail(item.questionid)">
                             <div class="content-question-title">
-                                如何度过大学四年？
+                                {{item.questiontitle}}
                             </div>
-                            <div class="richContent" >
-                                <div class="richContentInner">
-                                    <div  class="uIcon"></div>
-                                    <div class="firstAnswerItem-top-likeNumber">
-                                        个人赞同该回答
-                                    </div>
-                                    <div>：</div>
-                                    <div></div>
-                                </div>
+                            <div class="answer-content" v-html="item.acontent">
+                                {{item.acontent}}
                             </div>
                             <div class="richContentBottom">
                                 <div class="richContentAction">
                                     <el-button type="text">
                                         <div class="actionInner">
                                             <span>
-                                                <img src="../assets/answer.png" width="20px">
+                                                <img src="../assets/zan.png" width="20px">
                                             </span>
                                             <span class="text">
-                                                条回答
+                                                有{{item.alike}}人赞同
                                             </span>
                                         </div>
                                     </el-button>
                                 </div>
                                 <div class="latestReplyTime">
-                                    更新时间：
+                                    更新时间：{{item.atime}}
                                 </div>
                             </div>
                         </div>
                         <div class="paging">
                             <el-pagination
-                                @size-change="handleSizeChange"
                                 @current-change="handleCurrentChange"
                                 :current-page.sync="currentPage3"
                                 :hide-on-single-page=true
-                                :page-size="100"
+                                :page-size="10"
                                 layout="prev, pager, next, jumper"
-                                :total="1000">
+                                :total="total">
                             </el-pagination>
                         </div>
                     </div>
                 </div>
             </el-main>
+            <!-- 返回顶部 -->
+            <el-backtop></el-backtop>
         </div>
     </el-container>
 </template>
@@ -71,11 +67,135 @@
 <script>
 import myHeader from '../components/module/header.vue'
 import userAsidemenu from '../components/module/userAsidemenu.vue'
+import Qs from 'qs'
 export default {
     components: {
         myHeader,
         userAsidemenu,
     },
+    data(){
+        return{
+            total:'',
+            quesList:[],
+            portrait:'',
+            u_name:'',
+        }
+    },
+    created(){
+        this.getQuesList()
+        this.getUserInfo()
+    },
+    methods:{
+        getQuesList(){
+            let data = {
+                page: 1,
+                number: 10,
+                token: window.sessionStorage.getItem('token')
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/myAnswer',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log("我的回答列表",res);
+                if(res.data.resultCode==20006){
+                    _this.quesList=res.data.data.list
+                    _this.total=res.data.data.totalRow
+                }else{
+                    if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+                        _this.$message({
+                            type: 'warning',
+                            message: '登录失效，请重新登录!'
+                        });
+                    }else if(res.data.resultCode==20007){
+                        _this.$message({
+                            type: 'info',
+                            message: '您没有回答，快去回答问题吧(๑╹◡╹)ﾉ"""'
+                        });  
+                    }
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        },
+        handleCurrentChange(e){
+            console.log(e)
+            // this.listPage.page=e
+            let data = {
+                page: e,
+                number: 10,
+                token: window.sessionStorage.getItem('token')
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/myAnswer',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log("我的回答列表",res);
+                if(res.data.resultCode==20006){
+                    _this.quesList=res.data.data.list
+                    _this.total=res.data.data.totalRow
+                }else{
+                    if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+                        _this.$message({
+                            type: 'warning',
+                            message: '登录失效，请重新登录!'
+                        });
+                    }else if(res.data.resultCode==20007){
+                        _this.$message({
+                            type: 'info',
+                            message: '您没有回答，快去回答问题吧(๑╹◡╹)ﾉ"""'
+                        });  
+                    }
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        },
+        getUserInfo(){
+            let data = {
+                token: window.sessionStorage.getItem('token')
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/getUserInfo',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log("个人界面-用户信息",res);
+                // console.log(res.data.data.u_icon)
+                if(res.data.resultCode==20006){
+                    _this.portrait=res.data.data.u_icon
+                    _this.u_name=res.data.data.u_name
+                }else{
+                    console.log(res.resultCode)
+                    alert('加载失败，请稍后再试')
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        },
+        getQuestionDetail(q_id){
+            let _this=this
+            _this.$router.push({
+                path:'/detail',
+                name:'detail',
+                //参数
+                query:{
+                    q_id:q_id,
+                    // dataObj:{}
+                }
+            })
+        },
+    }
 }
 </script>
 
@@ -86,10 +206,12 @@ export default {
     justify-content:center;
 }
 .main-container{
+    padding-bottom: 20px;
     width: 1060px;
     margin: 0 auto;
 }
 .userInfo{
+    padding-left: 20px;
     margin-top: 20px;
     width: 100%;
     border: solid 1px #e6e6e6;
@@ -104,6 +226,7 @@ export default {
 .userNickname{
     margin-left: 15px;
     font-weight: bold;
+    font-size: 20px;
 }
 .ques-answer-container{
     padding: 0;
@@ -182,37 +305,12 @@ export default {
     font-size: 12px;
     color: grey;
     margin-left: 15px;
+    margin-right: 15px;
 }
-.richContent{
-    display: flex;
-    flex-wrap: nowrap;
-    width: 100%;
-}
-.richContentTitle{
-    width: 100%;
-    margin-left: 15px;
-    font-size: 22px;
-    font-weight: 600;
-    line-height: 1.8;
-}
-.richContentInner{
-    padding-left: 15px;
-    display: flex;
-    flex-wrap: nowrap;
+.answer-content{
+    padding: 5px;
     font-size: 16px;
-    line-height: 1.6;
-}
-.uIcon{
-    margin-right: 10px;
-}
-.u-name{
-    font-size: 18px;
-    font-weight: bold;
-    margin-left: 6px;
-}
-.firstAnswerItem-top-likeNumber{
-    font-size: 12px;
-    color: grey;
-    margin-top: 5px;
+    line-height: 20px;
+    margin-left: 15px;
 }
 </style>

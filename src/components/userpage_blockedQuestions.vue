@@ -4,8 +4,10 @@
         <my-header></my-header>
         <div class="main-container">
             <div class="userInfo">
-                <img class="userIcon" src="../assets/portrait.jpg" width="40px" height="40px">
-                <div class="userNickname">用户昵称</div>
+                <span>
+                    <img class="userIcon" :src="portrait" width="40px" height="40px">
+                </span>
+                <div class="userNickname">{{u_name}}</div>
             </div>
             <el-main class="ques-answer-container">
                 <div class="asidemenu">
@@ -18,11 +20,12 @@
                         <el-breadcrumb-item>被屏蔽问题</el-breadcrumb-item>
                     </el-breadcrumb>
                     <div class="content">
-                        <div class="content-question">
-                            <div class="content-question-title">
-                                如何度过大学四年？
+                        <div class="content-question" v-for="item in quesList" :key="item.q_id">
+                            <div class="content-question-title-container">
+                                <div class="content-question-title"  @click="getQuestionDetail(item.q_id)">{{item.q_title}}</div>
+                                <appeal-question :q_id="item.q_id"></appeal-question>
                             </div>
-                            <div class="richContentBottom">
+                            <div class="richContentBottom" @click="getQuestionDetail(item.q_id)">
                                 <div class="richContentAction">
                                     <el-button type="text">
                                         <div class="actionInner">
@@ -30,30 +33,31 @@
                                                 <img src="../assets/answer.png" width="20px">
                                             </span>
                                             <span class="text">
-                                                条回答
+                                                {{item.replynumber}}条回答
                                             </span>
                                         </div>
                                     </el-button>
                                 </div>
                                 <div class="latestReplyTime">
-                                    更新时间：
+                                    更新时间：{{item.latestReplyTime}}
                                 </div>
                             </div>
                         </div>
                         <div class="paging">
                             <el-pagination
-                                @size-change="handleSizeChange"
                                 @current-change="handleCurrentChange"
                                 :current-page.sync="currentPage3"
                                 :hide-on-single-page=true
-                                :page-size="100"
+                                :page-size="10"
                                 layout="prev, pager, next, jumper"
-                                :total="1000">
+                                :total="total">
                             </el-pagination>
                         </div>
                     </div>
                 </div>
             </el-main>
+            <!-- 返回顶部 -->
+            <el-backtop></el-backtop>
         </div>
     </el-container>
 </template>
@@ -61,11 +65,137 @@
 <script>
 import myHeader from '../components/module/header.vue'
 import userAsidemenu from '../components/module/userAsidemenu.vue'
+import appealQuestion from './module/appealQuestion.vue'
+import Qs from 'qs'
 export default {
     components: {
         myHeader,
         userAsidemenu,
+        appealQuestion
     },
+    data(){
+        return{
+            total:'',
+            quesList:[],
+            portrait:'',
+            u_name:'',
+        }
+    },
+    created(){
+        this.getQuesList()
+        this.getUserInfo()
+    },
+    methods:{
+        getQuesList(){
+            let data = {
+                page: 1,
+                number: 10,
+                token: window.sessionStorage.getItem('token')
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/protectQuestion',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log("被屏蔽问题列表",res);
+                if(res.data.resultCode==20006){
+                    _this.quesList=res.data.data.list
+                    _this.total=res.data.data.totalRow
+                }else{
+                    if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+                        _this.$message({
+                            type: 'warning',
+                            message: '登录失效，请重新登录!'
+                        });
+                    }else if(res.data.resultCode==20007){
+                        _this.$message({
+                            type: 'info',
+                            message: '您没有被屏蔽的问题'
+                        });  
+                    }
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        },
+        handleCurrentChange(e){
+            console.log(e)
+            // this.listPage.page=e
+            let data = {
+                page: e,
+                number: 10,
+                token: window.sessionStorage.getItem('token')
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/protectQuestion',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log("被屏蔽问题列表",res);
+                if(res.data.resultCode==20006){
+                    _this.quesList=res.data.data.list
+                    _this.total=res.data.data.totalRow
+                }else{
+                    if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+                        _this.$message({
+                            type: 'warning',
+                            message: '登录失效，请重新登录!'
+                        });
+                    }else if(res.data.resultCode==20007){
+                        _this.$message({
+                            type: 'info',
+                            message: '您没有被屏蔽的问题'
+                        });  
+                    }
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        },
+        getUserInfo(){
+            let data = {
+                token: window.sessionStorage.getItem('token')
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/getUserInfo',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log("个人界面-用户信息",res);
+                // console.log(res.data.data.u_icon)
+                if(res.data.resultCode==20006){
+                    _this.portrait=res.data.data.u_icon
+                    _this.u_name=res.data.data.u_name
+                }else{
+                    console.log(res.resultCode)
+                    alert('加载失败，请稍后再试')
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        },
+        getQuestionDetail(q_id){
+            let _this=this
+            _this.$router.push({
+                path:'/detail',
+                name:'detail',
+                //参数
+                query:{
+                    q_id:q_id,
+                    // dataObj:{}
+                }
+            })
+        },
+    }
 }
 </script>
 
@@ -76,10 +206,12 @@ export default {
     justify-content:center;
 }
 .main-container{
+    padding-bottom: 20px;
     width: 1060px;
     margin: 0 auto;
 }
 .userInfo{
+    padding-left: 20px;
     margin-top: 20px;
     width: 100%;
     border: solid 1px #e6e6e6;
@@ -94,6 +226,7 @@ export default {
 .userNickname{
     margin-left: 15px;
     font-weight: bold;
+    font-size: 20px;
 }
 .ques-answer-container{
     padding: 0;
@@ -124,14 +257,26 @@ export default {
     margin-right: 20px;
     margin-top: 15px;
 }
-.content-question-title{
+.content-question-title-container{
     width: 100%;
+    display: flex;
+    align-items: flex-start;
+}
+.content-question-title{
     margin-left: 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 90%;
+    white-space:nowrap; //规定段落中的文本不进行换行
+    text-overflow:ellipsis; //text-overflow 属性规定当文本溢出包含元素时发生的事情。ellipsis:显示省略符号来代表被修剪的文本。
+    overflow:hidden;
     font-size: 18px;
     font-weight: 600;
     line-height: 1.8;
-    margin-top: 5px;
-    margin-bottom: 5px;
+}
+.content-question-title-button{
+    margin-top: 10px;
+    margin-right: 10px;
 }
 .richContentBottom{
     display: flex;
@@ -172,5 +317,6 @@ export default {
     font-size: 12px;
     color: grey;
     margin-left: 15px;
+    margin-right: 15px;
 }
 </style>

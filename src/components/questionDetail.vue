@@ -29,7 +29,7 @@
                                 <img src="item.q_picture" width="200px">
                             </div> --> 
                             <div class="richContentInner" v-if="flag===true" @change="configModify;cancelModify">
-                                <div v-html="questionInfo.u_icon" class="uIcon">{{questionInfo.u_icon}}</div>
+                                <img :src="questionInfo.u_icon" class="uIcon">
                                 <div>{{questionInfo.u_name}}：</div>
                                 <div  v-html="questionInfo.q_content">{{questionInfo.q_content}}</div>
                             </div> 
@@ -133,7 +133,7 @@
                         <div class="firstAnswerItem" v-for="item in FirstAnswerInfo.list" :key="item.q_id" index='item.q_id'>
                             <div class="firstAnswerItem-top">
                                 <div class="firstAnswerItem-top-userInfo">
-                                    <div v-html="item.u_icon" class="uIcon">{{item.u_icon}}</div>
+                                    <img :src="questionInfo.u_icon" class="uIcon">
                                     <div class="u-name">{{item.u_name}}</div>
                                 </div>
                                 <div class="firstAnswerItem-top-likeNumber">
@@ -626,6 +626,8 @@ export default {
 }
 .uIcon{
     margin-right: 10px;
+    height: 25px;
+    width: 25px;
 }
 .richContentBottom{
     display: flex;
