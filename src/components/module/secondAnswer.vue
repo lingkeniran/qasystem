@@ -22,7 +22,7 @@
                     <div class="secondAnswerItem">
                         <div class="firstAnswerItem-top">
                             <div class="firstAnswerItem-top-userInfo">
-                                <div v-html="i.u_icon" class="uIcon">{{i.u_icon}}</div>
+                                <img :src="i.u_icon" class="uIcon">
                                 <div class="u-name">{{i.u_name}}</div>
                                 <div class="text-reply">回复</div>
                                 <div v-html="i.replyicon" class="uIcon">{{i.replyicon}}</div>

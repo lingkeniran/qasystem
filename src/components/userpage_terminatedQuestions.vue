@@ -3,11 +3,14 @@
         <!--头部目录区-->
         <my-header></my-header>
         <div class="main-container">
-            <div class="userInfo">
-                <span>
-                    <img class="userIcon" :src="portrait" width="40px" height="40px">
-                </span>
-                <div class="userNickname">{{u_name}}</div>
+            <div class="userInfo-container">
+                <div class="userInfo">
+                    <span>
+                        <img class="userIcon" :src="portrait" width="40px" height="40px">
+                    </span>
+                    <div class="userNickname">{{u_name}}</div>
+                </div>
+                <user-appeal v-if="u_reported===1"></user-appeal>
             </div>
             <el-main class="ques-answer-container">
                 <div class="asidemenu">
@@ -64,11 +67,13 @@
 <script>
 import myHeader from '../components/module/header.vue'
 import userAsidemenu from '../components/module/userAsidemenu.vue'
+import userAppeal from './module/userAppeal.vue'
 import Qs from 'qs'
 export default {
     components: {
         myHeader,
         userAsidemenu,
+        userAppeal
     },
     data(){
         return{
@@ -76,6 +81,7 @@ export default {
             quesList:[],
             portrait:'',
             u_name:'',
+            u_reported:'',
         }
     },
     created(){
@@ -171,6 +177,7 @@ export default {
                 if(res.data.resultCode==20006){
                     _this.portrait=res.data.data.u_icon
                     _this.u_name=res.data.data.u_name
+                    _this.u_reported=res.data.data.u_reported
                 }else{
                     console.log(res.resultCode)
                     alert('加载失败，请稍后再试')
@@ -209,13 +216,19 @@ export default {
 }
 .userInfo{
     padding-left: 20px;
-    margin-top: 20px;
-    width: 100%;
-    border: solid 1px #e6e6e6;
+    // width: 100%;
     height: 60px;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
+}
+.userInfo-container{
+    margin-top: 20px;
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    border: solid 1px #e6e6e6;
 }
 .userIcon{
     margin-left: 10px;

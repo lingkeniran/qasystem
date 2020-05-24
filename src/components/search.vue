@@ -36,14 +36,14 @@
                                             提问时间：{{item.q_time}}
                                         </div> -->
                                     </div>
-                                    <div class="richContent"  @click="getQuestionDetail(item.q_id)">
+                                    <div class="richContent" >
                                         <!-- <div class="richContentImage">
                                             <img src="item.q_picture" width="200px">
                                         </div> -->
                                         <div class="richContentInner">
-                                            <img :src="item.u_icon" class="uIcon">
+                                            <user-portrait :imgsrc="item.u_icon" :u_id="item.u_id" :userId="u_id"></user-portrait>
                                             <div>{{item.u_name}}：</div>
-                                            <div  v-html="item.q_content">{{item.q_content}}</div>
+                                            <div @click="getQuestionDetail(item.q_id)" v-html="item.q_content">{{item.q_content}}</div>
                                         </div>
                                     </div>
                                     <div class="richContentBottom">
@@ -267,11 +267,13 @@
 <script>
 import myHeader from '../components/module/header.vue'
 import report from './module/report.vue'
+import userPortrait from './module/userPortrait.vue'
 import Qs from 'qs'
 export default {
     components: {
         myHeader,
         report,
+        userPortrait
     },
     data(){
         return{

@@ -35,12 +35,13 @@
                                             <!-- 啦啦啦 -->
                                         </div>
                                     </div>
-                                    <div class="richContent"  @click="getQuestionDetail(item.q_id)">
+                                    <div class="richContent" >
                                         <div class="richContentInner">
-                                            <img :src="item.u_icon" class="uIcon">
+                                            <!-- <img :src="item.u_icon" class="uIcon"> -->
+                                            <user-portrait :imgsrc="item.u_icon" :u_id="item.u_id" :userId="u_id"></user-portrait>
                                             <!-- <div class="uIcon">{{item.u_icon}}</div> -->
                                             <div>{{item.u_name}}：</div>
-                                            <div  v-html="item.q_content">{{item.q_content}}</div>
+                                            <div  v-html="item.q_content" @click="getQuestionDetail(item.q_id)">{{item.q_content}}</div>
                                         </div>
                                     </div>
                                     <div class="richContentBottom">
@@ -86,7 +87,10 @@
                                         <td>
                                             <span>
                                                 <span class="c-index c-index-hot1 c-gap-icon-right-small">1</span>
-                                                <a class="hotListContent"  @click="getQuestionDetail(hotList[0].q_id)">{{hotList[0].q_title}}</a>
+                                                <a class="hotListContent"  @click="getQuestionDetail(hotList[0].q_id)">
+                                                    {{hotList[0].q_title}}
+                                                    <!-- lalala -->
+                                                </a>
                                             </span>
                                         </td>
                                         <td class="opr-toplist1-right opr-toplist1-right-hot">
@@ -218,14 +222,14 @@
 <script>
 import myHeader from '../components/module/header.vue'
 import report from './module/report.vue'
-// import mySwiper from './module/swiper.vue'
+import userPortrait from './module/userPortrait.vue'
 // import imageSlider from './module/ImageSlider.vue'
 import Qs from 'qs'
 export default {
     components: {
         myHeader,
         report,
-        // mySwiper,
+        userPortrait,
         // imageSlider
     },
     data() {

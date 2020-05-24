@@ -152,9 +152,9 @@ export default {
                 if(res.data.resultCode==20006){
                     _this.portrait=res.data.data.u_icon
                     _this.message_notread=res.data.data.u_message_not_read
-                }else{
+                }else if(res.data.resultCode==20007){
                     // console.log(res.resultCode)
-                    alert('加载失败，请稍后再试')
+                    _this.$message.error('加载失败，请稍后再试')
                 }
             })
             .catch(function(err) {

@@ -16,17 +16,6 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <!-- <el-select v-model="value" placeholder="全部" class="handle-select mr10">
-                     <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                    </el-option> -->
-                    <!-- <el-option key="2" label="全部" value="2" @click="getMessageList()"></el-option>
-                    <el-option key="0" label="未读" value="0"><div @click="getNOTReadMessageList()"></div></el-option>
-                    <el-option key="1" label="已读" value="1" @click="getReadedMessageList()"></el-option>
-                </el-select>  -->
                 <el-dropdown>
                     <el-button class="viewMessage" type="primary">
                         分类查看消息<i class="el-icon-arrow-down el-icon--right"></i>
@@ -137,7 +126,7 @@ export default {
                 data: Qs.stringify(data)
             })
             .then(function(res) {
-                console.log("已读消息列表",res);
+                // console.log("已读消息列表",res);
                 _this.tableData=res.data.data.list
                 // console.log(_this.tableData)
                 _this.pageTotal=res.data.data.totalRow
@@ -193,9 +182,9 @@ export default {
                 data: Qs.stringify(data)
             })
             .then(function(res) {
-                console.log("消息列表",res);
+                // console.log("消息列表",res);
                 _this.tableData=res.data.data.list
-                console.log(_this.tableData)
+                // console.log(_this.tableData)
                 _this.pageTotal=res.data.data.totalRow
                 if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
                     _this.$message({
@@ -217,22 +206,23 @@ export default {
                 .then(() => {
                     this.idx = index;
                     this.form = row;
-                    console.log('单条删除',index,row)
+                    // console.log('单条删除',index,row)
                     let data = {
                         token: window.sessionStorage.getItem('token'),
                         um_id:row.um_id
                     }
                     let _this=this
-                    console.log(data)
+                    // console.log(data)
                     this.$axios({
                         method: "post",
                         url: 'user/cancelMessage',
                         data: Qs.stringify(data)
                     })
                     .then(function(res) {
-                        console.log("删除单条消息",res);
+                        // console.log("删除单条消息",res);
                         if(res.data.resultCode==20016){
-                            location.reload()
+                            // location.reload()
+                            _this.getMessageList()
                         }
                         else if(res.data.resultCode==20031){
                             this.$message.error('删除消息失败，请稍后再试')
@@ -255,11 +245,11 @@ export default {
             })
                 .then(() => {
                     const length = this.multipleSelection.length;
-                    console.log(length)
+                    // console.log(length)
                     let ids = '';
                     // this.readList = this.readList.concat(this.multipleSelection);
                     this.delList=this.multipleSelection
-                    console.log('删除列表',this.delList)
+                    // console.log('删除列表',this.delList)
                     // var ids=[]
                     for (let i = 0; i < length; i++) {
                         // ids.push( this.readList[i].um_id)
@@ -278,9 +268,10 @@ export default {
                         data: Qs.stringify(data)
                     })
                     .then(function(res) {
-                        console.log("删除消息",res);
+                        // console.log("删除消息",res);
                         if(res.data.resultCode==20016){
-                            location.reload()
+                            // location.reload()
+                            _this.getMessageList()
                         }
                         else if(res.data.resultCode==20031){
                             _this.$message.error('删除消息失败，请稍后再试')
@@ -299,7 +290,7 @@ export default {
             let ids = '';
             // this.readList = this.readList.concat(this.multipleSelection);
             this.readList=this.multipleSelection
-            console.log('已读列表',this.readList)
+            // console.log('已读列表',this.readList)
             // var ids=[]
             for (let i = 0; i < length; i++) {
                 // ids.push( this.readList[i].um_id)
@@ -318,9 +309,10 @@ export default {
                 data: Qs.stringify(data)
             })
             .then(function(res) {
-                console.log("阅读消息",res);
+                // console.log("阅读消息",res);
                 if(res.data.resultCode==20029){
-                    location.reload()
+                    // location.reload()
+                    _this.getMessageList()
                 }
                 else if(res.data.resultCode==20030){
                     _this.$message.error('阅读消息失败，请稍后再试')
@@ -336,22 +328,23 @@ export default {
         handleRead(index, row) {
             this.idx = index;
             this.form = row;
-            console.log('单条已读',index,row)
+            // console.log('单条已读',index,row)
             let data = {
                 token: window.sessionStorage.getItem('token'),
                 um_id:row.um_id
             }
             let _this=this
-            console.log(data)
+            // console.log(data)
             this.$axios({
                 method: "post",
                 url: 'user/readMessage',
                 data: Qs.stringify(data)
             })
             .then(function(res) {
-                console.log("阅读消息",res);
+                // console.log("阅读消息",res);
                 if(res.data.resultCode==20029){
-                    location.reload()
+                    // location.reload()
+                    _this.getMessageList()
                 }
                 else if(res.data.resultCode==20030){
                     this.$message.error('阅读消息失败，请稍后再试')
@@ -363,7 +356,7 @@ export default {
         },
         // 分页导航
         handlePageChange(e) {
-            console.log('第几页',e)
+            // console.log('第几页',e)
             let data = {
                 token: window.sessionStorage.getItem('token'),
                 number:10,
@@ -376,7 +369,7 @@ export default {
                 data: Qs.stringify(data)
             })
             .then(function(res) {
-                console.log("消息列表",res);
+                // console.log("消息列表",res);
                 _this.tableData=res.data.data.list
                 _this.pageTotal=res.data.data.totalRow
                 if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
@@ -401,6 +394,7 @@ export default {
     justify-content:center;
 }
 .container {
+    margin-top: 30px;
     padding: 30px;
     background: #fff;
     border: 1px solid #ddd;

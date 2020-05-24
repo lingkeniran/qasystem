@@ -423,7 +423,7 @@ export default {
                 }else if(res.data.resultCode==10005){
                     _this.$message({
                     type: 'warning',
-                    message: '注册失败!'
+                    message: '邮箱地址无效，无法接收到邮件!'
                     });
                 }else if(res.data.resultCode==10006){
                     _this.$message({

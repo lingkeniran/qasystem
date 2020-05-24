@@ -27,9 +27,10 @@
                         <div class="richContent">
                             <!-- <div class="richContentImage">
                                 <img src="item.q_picture" width="200px">
-                            </div> --> 
+                            </div> -->  
                             <div class="richContentInner" v-if="flag===true" @change="configModify;cancelModify">
-                                <img :src="questionInfo.u_icon" class="uIcon">
+                                <!-- <img :src="questionInfo.u_icon" class="uIcon"> -->
+                                <user-portrait :imgsrc="questionInfo.u_icon" :u_id="questionInfo.u_id" :userId="u_id"></user-portrait>
                                 <div>{{questionInfo.u_name}}：</div>
                                 <div  v-html="questionInfo.q_content">{{questionInfo.q_content}}</div>
                             </div> 
@@ -38,8 +39,8 @@
                                     <quill-editor class="quill-editor" ref="myTextEditor" v-model="content" :options="editorOption"></quill-editor>
                                 </div>
                                 <div class="quill-btn-container">
-                                    <el-button class="editor-btn" type="primary" @click="configModify()" plain>确认修改</el-button>
-                                    <el-button class="editor-btn" type="primary" @click="cancelModify()" plain>取消修改</el-button>
+                                    <el-button class="editor-btn" type="primary" @click="configModify();" plain>确认修改</el-button>
+                                    <el-button class="editor-btn" type="primary" @click="cancelModify();" plain>取消修改</el-button>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +134,8 @@
                         <div class="firstAnswerItem" v-for="item in FirstAnswerInfo.list" :key="item.q_id" index='item.q_id'>
                             <div class="firstAnswerItem-top">
                                 <div class="firstAnswerItem-top-userInfo">
-                                    <img :src="questionInfo.u_icon" class="uIcon">
+                                    <!-- <img :src="item.u_icon" class="uIcon"> -->
+                                    <user-portrait :imgsrc="item.u_icon" :u_id="item.u_id" :userId="u_id"></user-portrait>
                                     <div class="u-name">{{item.u_name}}</div>
                                 </div>
                                 <div class="firstAnswerItem-top-likeNumber">
@@ -171,13 +173,14 @@ import shrinkView from '../components/module/shrinkView.vue'
 import report from '../components/module/report.vue'
 import secondAnswer from '../components/module/secondAnswer.vue'
 import like from '../components/module/like.vue'
+import userPortrait from './module/userPortrait.vue'
 import Qs from 'qs'
 // import Vue from 'vue'
 // import { Message } from 'element-ui'
 // Vue.use(Message)
 // Vue.prototype.$message = Message
 export default {
-    inject: ['reload'], //注入
+    //inject: ['reload'], //注入
     components: {
         myHeader,
         quillEditor,
@@ -185,6 +188,7 @@ export default {
         report,
         secondAnswer,
         like,
+        userPortrait
     },
     data(){
         return{
@@ -264,9 +268,9 @@ export default {
                 }else{
                     // console.log(res.resultCode)
                     if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
-                        alert('登录过期,请重新登录')
+                        _this.$message.error('登录过期,请重新登录')
                     }else if(res.data.resultCode==20007){
-                        alert('加载失败，请稍后再试')
+                        _this.$message.error('加载失败，请稍后再试')
                     }
                 }
             })
@@ -276,7 +280,7 @@ export default {
         },
         closeDialog(){
             this.textarea="";
-            location.reload()
+            // location.reload()
         },
         onEditorChange({ editor, html, text }) {
             this.content = html;
@@ -304,13 +308,15 @@ export default {
                 console.log('修改问题',res);
                 // console.log(res.data.resultCode)
                 if(res.data.resultCode==20017){
-                    // this.flag=true
                     // console.log(this.flag)
-                    location.reload()
+                    // location.reload()
+                    _this.getQuesDetail(_this.q_id)
+                    _this.flag=true
+                    _this.$message.success('修改成功')
                 }else{
                     // console.log(res.resultCode)
                     if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
-                        alert('登录过期,请重新登录')
+                        _this.$message.error('登录过期,请重新登录')
                     }
                 }
             })
@@ -348,7 +354,7 @@ export default {
                         }else{
                             // console.log(res.resultCode)
                             if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
-                                alert('登录过期,请重新登录')
+                                _this.$message.error('登录过期,请重新登录')
                             }
                         }
                     })
@@ -387,11 +393,13 @@ export default {
                         // console.log(res.data.resultCode)
                         if(res.data.resultCode==20015){
                             // 刷新页面
-                            location.reload();
+                            // location.reload();
+                            _this.getQuesDetail(_this.q_id)
+                            _this.$message.success('终结成功')
                         }else{
                             // console.log(res.resultCode)
                             if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
-                                alert('登录过期,请重新登录')
+                                _this.$message.error('登录过期,请重新登录')
                             }
                         }
                     })
@@ -422,10 +430,10 @@ export default {
             }
             var token=window.sessionStorage.getItem('token')
             if(token==null||token==undefined||token==""){
-                alert('请先登录')
+                _this.$message.error('请先登录')
             }
             if(_this.textarea==""){
-                alert('举报内容不能为空！')
+                _this.$message.error('举报内容不能为空！')
             }
             if(token!=null||token!=undefined||token!="")
             {
@@ -438,12 +446,12 @@ export default {
                     console.log(res);
                     console.log(res.data.resultCode)
                     if(res.data.resultCode==20013){
-                        alert('举报成功!')
+                        _this.$message.success('举报成功!')
                     }
                     else if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
-                        alert('登录失效，请重新登录')
+                        _this.$message.error('登录失效，请重新登录')
                     }else if(res.data.resultCode==20014){
-                        alert('举报失败，请稍后再试')
+                        _this.$message.error('举报失败，请稍后再试')
                     }
                 })
                 .catch(function(err) {
@@ -452,14 +460,15 @@ export default {
             }
         },
         answerQuestion(){
+            let _this=this
             var token=window.sessionStorage.getItem('token')
             if(token==null||token==undefined||token==""){
-                alert('请先登录')
+                _this.$message.warning('请先登录')
             }
             if(this.q_finished==1){
-                alert('该问题已终结，无法回答')
+                _this.$message.warning('该问题已终结，无法回答')
             }else{
-                this.answer_flag=!this.answer_flag
+                _this.answer_flag=!_this.answer_flag
             }
         },
         answerQues(){
@@ -475,7 +484,7 @@ export default {
             }
             var token=window.sessionStorage.getItem('token')
             if(_this.answercontent==""){
-                alert('回答内容不能为空！')
+                _this.$message.warning('回答内容不能为空！')
             }else{
                 this.$axios({
                 method: "post",
@@ -490,7 +499,9 @@ export default {
                             type: 'success',
                             message: '回答成功!'
                         });
-                        location.reload()
+                        _this.answer_flag=!_this.answer_flag
+                        // location.reload()
+                        _this.getQuesDetail(_this.q_id)
                     }else if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
                         _this.$message({
                             type: 'warning',

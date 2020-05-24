@@ -3,11 +3,14 @@
         <!--头部目录区-->
         <my-header></my-header>
         <div class="main-container">
-            <div class="userInfo">
-                <span>
-                    <img class="userIcon" :src="portrait" width="40px" height="40px">
-                </span>
-                <div class="userNickname">{{u_name}}</div>
+            <div class="userInfo-container">
+                <div class="userInfo">
+                    <span>
+                        <img class="userIcon" :src="portrait" width="40px" height="40px">
+                    </span>
+                    <div class="userNickname">{{u_name}}</div>
+                </div>
+                <user-appeal v-if="u_reported===1"></user-appeal>
             </div>
             <el-main class="ques-answer-container">
                 <div class="asidemenu">
@@ -20,10 +23,10 @@
                         <el-breadcrumb-item>被屏蔽回答</el-breadcrumb-item>
                     </el-breadcrumb>
                     <div class="content">
-                        <div class="content-question" v-for="item in quesList" :key="item.answerid" @click="getQuestionDetail(item.questionid)">
+                        <div class="content-question" v-for="item in quesList" :key="item.answerid">
                             <div class="content-question-title-container">
                                 <div class="content-question-title"  @click="getQuestionDetail(item.questionid)">{{item.questiontitle}}</div>
-                                <appeal-question :q_id="item.questionid"></appeal-question>
+                                <appeal-answer :q_id="item.answerid"></appeal-answer>
                             </div>
                             <div class="answer-content" v-html="item.acontent">
                                 {{item.acontent}}
@@ -68,13 +71,15 @@
 <script>
 import myHeader from '../components/module/header.vue'
 import userAsidemenu from '../components/module/userAsidemenu.vue'
-import appealQuestion from './module/appealQuestion.vue'
+import appealAnswer from './module/appealAnswer.vue'
+import userAppeal from './module/userAppeal.vue'
 import Qs from 'qs'
 export default {
     components: {
         myHeader,
         userAsidemenu,
-        appealQuestion
+        appealAnswer,
+        userAppeal
     },
     data(){
         return{
@@ -82,6 +87,7 @@ export default {
             quesList:[],
             portrait:'',
             u_name:'',
+            u_reported:'',
         }
     },
     created(){
@@ -102,7 +108,7 @@ export default {
                 data: Qs.stringify(data)
             })
             .then(function(res) {
-                console.log("我的回答列表",res);
+                console.log("被屏蔽回答列表",res);
                 if(res.data.resultCode==20006){
                     _this.quesList=res.data.data.list
                     _this.total=res.data.data.totalRow
@@ -178,6 +184,7 @@ export default {
                 if(res.data.resultCode==20006){
                     _this.portrait=res.data.data.u_icon
                     _this.u_name=res.data.data.u_name
+                    _this.u_reported=res.data.data.u_reported
                 }else{
                     console.log(res.resultCode)
                     alert('加载失败，请稍后再试')
@@ -212,16 +219,22 @@ export default {
 .main-container{
     width: 1060px;
     margin: 0 auto;
-}
+} 
 .userInfo{
     padding-left: 20px;
-    margin-top: 20px;
-    width: 100%;
-    border: solid 1px #e6e6e6;
+    // width: 100%;
     height: 60px;
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
+}
+.userInfo-container{
+    margin-top: 20px;
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    border: solid 1px #e6e6e6;
 }
 .userIcon{
     margin-left: 10px;
