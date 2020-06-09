@@ -7,8 +7,5 @@ npm install
 
 ### 运行项目
 ```
-npm run server
+npm runserver
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
