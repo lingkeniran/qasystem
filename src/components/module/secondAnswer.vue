@@ -18,47 +18,52 @@
             width="60%"
             append-to-body>
             <div class="second-wrapper">
-                <div class="secondAnswerContainer"  v-for="i in SecondReplyList" :key="i.q_id" index='i.q_id'>
-                    <div class="secondAnswerItem">
-                        <div class="firstAnswerItem-top">
-                            <div class="firstAnswerItem-top-userInfo">
-                                <img :src="i.u_icon" class="uIcon">
-                                <div class="u-name">{{i.u_name}}</div>
-                                <div class="text-reply">回复</div>
-                                <div v-html="i.replyicon" class="uIcon">{{i.replyicon}}</div>
-                                <div class="u-name">{{i.replyname}}</div>
-                            </div>
-                            <div class="firstAnswerItem-top-likeNumber">
-                                {{i.q_like}}个人赞同该回答
-                            </div>
-                        </div>
-                        <div class="firstAnswerItem-content" v-html="i.q_content">
-                            {{i.q_content}}
-                        </div>
-                    </div>
-                    <div class="richContentAction">
-                        <!-- <el-button type="text" class="little-el-button"  @click="like(i.q_id,i.isLiked)">
-                            <div class="actionInner" v-if="i.isLiked===0">
-                                <span>
-                                    <img src="../../assets/zan.png" width="15px">
-                                </span>
-                                <div class="little-text">
-                                    赞同
+                <div v-if="emptyFlag">
+                    <div class="secondAnswerContainer"  v-for="i in SecondReplyList" :key="i.q_id" index='i.q_id'>
+                        <div class="secondAnswerItem">
+                            <div class="firstAnswerItem-top">
+                                <div class="firstAnswerItem-top-userInfo">
+                                    <img :src="i.u_icon" class="uIcon">
+                                    <div class="u-name">{{i.u_name}}</div>
+                                    <div class="text-reply">回复</div>
+                                    <img :src="i.replyicon" class="uIcon">
+                                    <div class="u-name">{{i.replyname}}</div>
+                                </div>
+                                <div class="firstAnswerItem-top-likeNumber">
+                                    {{i.q_like}}个人赞同该回答
                                 </div>
                             </div>
-                            <div class="actionInner" v-if="i.isLiked===1">
-                                <span>
-                                    <img src="../../assets/zan1.png" width="15px">
-                                </span>
-                                <div class="little-text">
-                                    取消赞同
-                                </div>
+                            <div class="firstAnswerItem-content" v-html="i.q_content">
+                                {{i.q_content}}
                             </div>
-                        </el-button> -->
-                        <little-like :q_id="i.q_id" :isLike="i.isLiked"></little-like>
-                        <reply-answer :q_id="i.q_id"></reply-answer>
-                        <littleReport v-if="i.isReported===0&&u_id!=i.u_id" :qId="i.q_id"></littleReport>
+                        </div>
+                        <div class="richContentAction">
+                            <!-- <el-button type="text" class="little-el-button"  @click="like(i.q_id,i.isLiked)">
+                                <div class="actionInner" v-if="i.isLiked===0">
+                                    <span>
+                                        <img src="../../assets/zan.png" width="15px">
+                                    </span>
+                                    <div class="little-text">
+                                        赞同
+                                    </div>
+                                </div>
+                                <div class="actionInner" v-if="i.isLiked===1">
+                                    <span>
+                                        <img src="../../assets/zan1.png" width="15px">
+                                    </span>
+                                    <div class="little-text">
+                                        取消赞同
+                                    </div>
+                                </div>
+                            </el-button> -->
+                            <little-like :q_id="i.q_id" :isLike="i.isLiked"></little-like>
+                            <reply-answer :q_id="i.q_id"></reply-answer>
+                            <littleReport v-if="i.isReported===0&&u_id!=i.u_id" :qId="i.q_id"></littleReport>
+                        </div>
                     </div>
+                </div>
+                <div v-else class="flag_text">
+                    暂无评论，期待您的评论。
                 </div>
                 <div class="writeSecondAnswer">
                     <el-input type="textarea"
@@ -91,12 +96,14 @@ export default {
     data(){
         return{
             dialogVisible: false,
-            q_id:this.q_id,
+            // q_id:this.q_id,
             SecondReplyList:[],
             secondAnswerContent:'',
             isClick:'',
             isReply:'',
-            replyAnswerDialogVisible:''
+            replyAnswerDialogVisible:'',
+            emptyFlag:'',
+            u_id:window.sessionStorage.getItem('u_id')
         }
     }, 
     created(){
@@ -178,7 +185,13 @@ export default {
                 if(res.data.resultCode==20006){
                 // if(res.data.list.q_protected==0&&res.data.list.u_reported==0){
                     _this.SecondReplyList=res.data.data
-                    console.log(_this.SecondReplyList)
+                    console.log(_this.SecondReplyList.length)
+                    if(_this.SecondReplyList.length==0){
+                        _this.emptyFlag=false
+                    }else{
+                        _this.emptyFlag=true
+                    }
+                    // console.log(_this.SecondReplyList)
                 // }
                 }else{
                     // console.log(res.resultCode)
@@ -402,5 +415,13 @@ export default {
     flex-wrap: nowrap;
     margin-right: 20px;
     margin-bottom: 2px;
+}
+.uIcon{
+    // margin-right: 10px;
+    height: 25px;
+    width: 25px;
+}
+.flag_text{
+    margin-left: 20px;
 }
 </style>

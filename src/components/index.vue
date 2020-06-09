@@ -75,7 +75,6 @@
                             </el-pagination>
                         </div>
                     </div>
-                    
                     <div class="hotList">
                         <div class="hotListTitle">
                             热榜
@@ -349,7 +348,7 @@ export default {
                 // }
                 }else{
                     console.log(res.resultCode)
-                    alert('加载失败，请稍后再试')
+                    _this.$message.error('加载失败，请稍后再试')
                 }
             })
             .catch(function(err) {
@@ -375,9 +374,9 @@ export default {
         },
         report(q_id){
             let _this=this
-            console.log('举报问题id',q_id)
-            console.log('举报内容',_this.textarea)
-            console.log('举报token',window.sessionStorage.getItem('token'))
+            // console.log('举报问题id',q_id)
+            // console.log('举报内容',_this.textarea)
+            // console.log('举报token',window.sessionStorage.getItem('token'))
             let data = {
                 q_id: q_id,
                 qr_content: _this.textarea,
@@ -385,10 +384,10 @@ export default {
             }
             var token=window.sessionStorage.getItem('token')
             if(token==null||token==undefined||token==""){
-                alert('请先登录')
+                _this.$message.info('请先登录')
             }
             if(_this.textarea==""){
-                alert('举报内容不能为空！')
+                _this.$message.warning('举报内容不能为空！')
             }
             if(token!=null||token!=undefined||token!="")
             {
@@ -401,12 +400,12 @@ export default {
                     console.log(res);
                     console.log(res.data.resultCode)
                     if(res.data.resultCode==20013){
-                        alert('举报成功!')
+                        _this.$message.success('举报成功!')
                     }
                     else if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
-                        alert('登录失效，请重新登录')
+                        _this.$message.error('登录失效，请重新登录')
                     }else if(res.data.resultCode==20014){
-                        alert('举报失败，请稍后再试')
+                        _this.$message.error('举报失败，请稍后再试')
                     }
                 })
                 .catch(function(err) {

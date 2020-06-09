@@ -77,6 +77,8 @@ export default {
                             type: 'success',
                             message: '举报成功!'
                         })
+                        // _this.$emit('getquestionList')
+                        location.reload()
                     }
                     else if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
                         _this.$message.error('登录失效，请重新登录')

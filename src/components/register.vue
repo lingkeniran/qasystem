@@ -360,7 +360,43 @@ export default {
                 confirmpasswordInfo.innerHTML = "两次密码不一致";
             }
         },
-        getVertification() {
+        // getVertification() {
+        //     if(this.code==""){
+        //         // alert('请输入验证码');
+        //         this.$message({
+        //             message: '请输入验证码!',
+        //             type: 'warning'
+        //         });
+        //         return;
+        //     }
+        //     if(this.identifyCode!=this.code){
+        //         this.code='';
+        //         this.refreshCode();
+        //         // alert('请输入正确的验证码')
+        //         this.$message({
+        //             message: '请输入正确的验证码!',
+        //             type: 'warning'
+        //         });
+        //         return;
+        //     }
+            // var vertification = document.getElementById("vertification").value;
+            // var vertificationInfo = document.getElementById("vertification");
+            // if( vertification == "" )
+        	// {
+        	// 	$("#vertification").attr('placeholder',"验证码不能为空");
+        	// 	$("#vertification").css('borderStyle','solid');
+        	// 	$("#vertification").css('borderColor','#FF0000');
+        	// 	$("#vertification").css('boxShadow','0 0 15px #FF0000');
+        	// }
+        	// if( vertification != "" )
+        	// {
+        	// 	$("#vertification").attr('placeholder',"");
+        	// 	$("#vertification").css('borderColor','');
+        	// 	$("#vertification").css('boxShadow','');
+        	// 	$("#vertification").css('borderStyle','');
+        	// }
+        // },
+        register(){
             if(this.code==""){
                 // alert('请输入验证码');
                 this.$message({
@@ -379,24 +415,6 @@ export default {
                 });
                 return;
             }
-            // var vertification = document.getElementById("vertification").value;
-            // var vertificationInfo = document.getElementById("vertification");
-            // if( vertification == "" )
-        	// {
-        	// 	$("#vertification").attr('placeholder',"验证码不能为空");
-        	// 	$("#vertification").css('borderStyle','solid');
-        	// 	$("#vertification").css('borderColor','#FF0000');
-        	// 	$("#vertification").css('boxShadow','0 0 15px #FF0000');
-        	// }
-        	// if( vertification != "" )
-        	// {
-        	// 	$("#vertification").attr('placeholder',"");
-        	// 	$("#vertification").css('borderColor','');
-        	// 	$("#vertification").css('boxShadow','');
-        	// 	$("#vertification").css('borderStyle','');
-        	// }
-        },
-        register(){
             let data={
                 u_name: $("#nickname").val(),
                 u_gender: $("#gender").val(),

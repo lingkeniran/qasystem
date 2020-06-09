@@ -142,14 +142,36 @@
                                     {{item.q_like}}个人赞同该回答
                                 </div>
                             </div>
-                            <div class="firstAnswerItem-content" v-html="item.q_content">
+                            <div v-if="modifyAnswer_flag" @change="modifyAnswer;deleteAnswer" class="firstAnswerItem-content" v-html="item.q_content">
                                 {{item.q_content}}
+                            </div>
+                            <div v-else @change="modifyAnswer;deleteAnswer" >
+                                <div class="quill-container">
+                                    <quill-editor class="quill-editor" ref="myTextEditor" v-model="item.q_content" :options="editorOption"></quill-editor>
+                                </div>
+                                <div class="quill-btn-container">
+                                    <el-button class="editor-btn" type="primary" @click="configModifyAnswer(item.q_id,item.q_content)" plain>确认修改</el-button>
+                                    <el-button class="editor-btn" type="primary" @click="configCancelModifyAnswer" plain>取消修改</el-button>
+                                </div>
                             </div>
                             <div class="firstAnswerItem-bottom">
                                 <div class="richContentAction">
                                     <like :q_id=item.q_id :isLike=item.isLiked ></like>
                                     <second-answer :q_id=item.q_id ></second-answer>
                                     <report v-if="item.isReported===0&&u_id!=item.u_id" :qId="item.q_id"></report>
+                                    <el-dropdown class="ellipsis-dropdown" v-if="Number(item.u_id)===Number(u_id)">
+                                        <span class="ellipsis">
+                                            <img src="../assets/shenglvehao.png" width="20px">
+                                        </span>
+                                        <el-dropdown-menu slot="dropdown">
+                                            <el-dropdown-item>
+                                                <div @click="modifyAnswer(item.q_id)">编辑回答</div>
+                                            </el-dropdown-item>
+                                            <el-dropdown-item>
+                                                <div @click="deleteAnswer(item.q_id)">删除回答</div>
+                                            </el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </el-dropdown>
                                 </div>
                                 <div class="firstAnswerItem-latestReplyTime">
                                     更新时间：{{item.q_time}}
@@ -192,6 +214,8 @@ export default {
     },
     data(){
         return{
+            modifyanswercontent:'',
+            modifyAnswer_flag:true,
             questionInfo:[],
             FirstAnswerInfo:[], //一级回答列表
             textarea:'',
@@ -230,6 +254,90 @@ export default {
         this.getQuesDetail(q_id)
     },
     methods:{
+        deleteAnswer(q_id){
+            let data = {
+                token: window.sessionStorage.getItem('token'),
+                q_id:q_id
+            }
+            let _this=this
+            this.$confirm('此操作将永久删除该问题, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+                }).then(() => {
+                    this.$axios({
+                        method: "post",
+                        url: 'user/cancelQuestion',
+                        data: Qs.stringify(data)
+                    })
+                    .then(function(res) {
+                        console.log('删除问题',res);
+                        // console.log(res.data.resultCode)
+                        if(res.data.resultCode==20016){
+                            // this.flag=true
+                            // console.log(this.flag)
+                            _this.getQuesDetail(_this.q_id)
+                            // _this.$router.go(-1)
+                        }else{
+                            // console.log(res.resultCode)
+                            if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+                                _this.$message.error('登录过期,请重新登录')
+                            }
+                        }
+                    })
+                    .catch(function(err) {
+                        console.log(err);
+                    })
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });          
+            });
+        },
+        configModifyAnswer(q_id,content){
+            let data = {
+                q_content: content,
+                token: window.sessionStorage.getItem('token'),
+                q_id:q_id
+            }
+            let _this=this
+            this.$axios({
+                method: "post",
+                url: 'user/rewriteQuestion',
+                data: Qs.stringify(data)
+            })
+            .then(function(res) {
+                console.log('修改问题',res);
+                // console.log(res.data.resultCode)
+                if(res.data.resultCode==20017){
+                    // console.log(this.flag)
+                    // location.reload()
+                    _this.getQuesDetail(_this.q_id)
+                    _this.modifyAnswer_flag=true
+                    _this.$message.success('修改成功')
+                }else{
+                    // console.log(res.resultCode)
+                    if(res.data.resultCode==1002||res.data.resultCode==1003||res.data.resultCode==1004){
+                        _this.$message.error('登录过期,请重新登录')
+                    }
+                }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+        },
+        configCancelModifyAnswer(){
+            this.modifyAnswer_flag=!this.modifyAnswer_flag
+        },
+        modifyAnswer(q_id){
+            console.log(q_id)
+            this.modifyAnswer_flag=false
+        },
         getQuesDetail(q_id){
             let data = {
                 page: 1,
@@ -246,6 +354,7 @@ export default {
             .then(function(res) {
                 console.log('问题详情',res);
                 console.log('token-uid',_this.u_id)
+                // console.log(res.data.data.FirstAnswerInfo.list.u_id)
                 // console.log(res.data.resultCode)
                 if(res.data.resultCode==20006){
                 // if(res.data.list.q_protected==0&&res.data.list.u_reported==0){
@@ -420,9 +529,9 @@ export default {
         },
         report(q_id){
             let _this=this
-            console.log('举报问题id',q_id)
-            console.log('举报内容',_this.textarea)
-            console.log('举报token',window.sessionStorage.getItem('token'))
+            // console.log('举报问题id',q_id)
+            // console.log('举报内容',_this.textarea)
+            // console.log('举报token',window.sessionStorage.getItem('token'))
             let data = {
                 q_id: q_id,
                 qr_content: _this.textarea,

@@ -301,10 +301,10 @@ export default {
     mounted(){
         let content = this.$route.query.content//query包含传递的所有参数
         console.log("content1",content)
-        this.getSearchQuesList(content)
+        this.getquestionList(content)
     },
     methods:{
-        getSearchQuesList(content){
+        getquestionList(content){
             console.log("content2",content)
             let data = {
                 page: 1,

@@ -14,7 +14,7 @@
                     <quill-editor class="quill-editor" ref="myTextEditor" v-model="content" :options="editorOption"></quill-editor>
                 </div>
                 <div class="el-btn">
-                    <el-button class="editor-btn" type="primary" @click="submit()">提交</el-button>
+                    <el-button class="editor-btn" type="primary" @click="submit();centerDialogVisible=false">提交</el-button>
                 </div>
             </div>
         </el-dialog>
@@ -103,29 +103,29 @@
                         console.log(res)
                         console.log(res.data.resultCode);
                         if(res.data.resultCode==20001){
-                            alert('提问成功')
+                            _this.$message.success('提问成功')
                             _this.dialogFormVisible = false
                         }else if(res.data.resultCode==20002){
-                            alert('提问失败')
+                            _this.$message.error('提问失败')
                         }else if(res.data.resultCode==20008){
-                            alert('内容不合规')
+                            _this.$message.warning('内容不合规')
                         }else if(res.data.resultCode==20009){
-                            alert('内容疑似违规')
+                            _this.$message.warning('内容疑似违规')
                         }else if(res.data.resultCode==20011){
-                            alert('失败响应')
+                            _this.$message.error('失败响应')
                         }else if(res.data.resultCode==1002){
-                            alert('请先登录')
+                            _this.$message.error('请先登录')
                         }else if(res.data.resultCode==1003){
-                            alert('登录过期，请重新登录')
+                            _this.$message.error('登录过期，请重新登录')
                         }else if(res.data.resultCode==1004){
-                            alert('登录过期，请重新登录')
+                            _this.$message.error('登录过期，请重新登录')
                         }
                     })
                     .catch(function(err) {
                         console.log(err);
                     })
                 }else{
-                    alert('请在您的问题标题上添加问号')
+                    _this.$message.warning('请在您的问题标题上添加问号')
                 }
                 
                 // this.$message.success('提交成功！');
