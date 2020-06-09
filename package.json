@@ -11,7 +11,7 @@
     "core-js": "^3.6.5",
     "cropper": "^4.1.0",
     "element-ui": "^2.13.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
     "node-sass": "^4.14.1",
