@@ -1,18 +1,13 @@
 # qasystem
 
-## Project setup
+## 安装项目
 ```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn serve
+npm install
 ```
 
-### Compiles and minifies for production
+### 运行项目
 ```
-yarn build
+npm run server
 ```
 
 ### Customize configuration
